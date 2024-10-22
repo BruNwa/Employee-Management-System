@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: backend_service
+    ports:
+      - "8000:8000"  
+    depends_on:
+      - db 
+    environment:
+      - DATABASE_URL=mysql://admin:admin_password@db:3306/employeedb
+    volumes:
+      - ./backend:/app  
+
+
+  db:
+    image: mysql:9.0
+    container_name: db_service
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: employeedb  
+    volumes:
+      - db_data:/var/lib/mysql 
+      - ./db_init/init.sql:/docker-entrypoint-initdb.d/init.sql  
+    ports:
+      - "3306:3306"  
+
+  
+  frontend:
+    image: nginx:alpine
+    container_name: frontend_service
+    ports:
+      - "3000:80" 
+    volumes:
+      - ./frontend/build:/usr/share/nginx/html  
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
