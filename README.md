@@ -1,9 +1,24 @@
 # Employee-Management-System Database structure 
 
+## Table of Tables
+
+1. [Employee table](#1-employee-table)
+2. [Department table](#2-department-table)
+3. [Role table](#3-role-table)
+4. [Attendance table](#4-attendance-table)
+5. [Performance table](#5-performance-table)
+6. [KPI table](#6-kpi-table)
+7. [Goal table](#7-goal-table)
+8. [Achievement table](#8-achievement-table)
+9. [Payroll table](#9-payroll-table)
+10. [Payment table](#10-payment-table)
+11. [Leave table](#11-leave-table)
+12. [Leave type table](#12-leave-type-table)
+13. [Leave balance table](#13-leave-balance-table)
+
 ## Overwiew
 Before describing stucture of database let us have a look at the visualisation of it to better comprehend the idea behind it, notice that all the names are in lowercase and singular:
 ![Alt Text](database_structure.png)
-
 ## Database employee_management_system - table structure
 
 It is important to note that all primary keys have the `AUTO_INCREMENT` attribute enabled. When these keys are used as foreign keys in other tables, they are associated with either `ON DELETE SET NULL` or `ON DELETE CASCADE` constraints, depending on whether the foreign key is critical to the integrity of the referencing table.
@@ -45,4 +60,24 @@ Here we have the same idea as with the previous table, just to keep data more fl
 |--------------------|------------------------------------------------|------------------|
 | `role_id` | `INT` | `PRIMARY KEY` |
 | `role_name` | `VARCHAR(100)` | just a simle name is enough for our needs |
-### 
+
+### 4. Attendance table 
+
+
+### 5. Performance table
+
+### 6. KPI table
+
+### 7. Goal table
+
+### 8. Achievement table 
+
+### 9. Payroll table
+
+### 10. Payment table
+
+### 11. Leave table 
+
+### 12. Leave type table
+
+### 13. Leave balance table
