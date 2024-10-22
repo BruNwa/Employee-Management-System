@@ -36,9 +36,9 @@ This will clarify the meaning and when to use each constraint, and it will stand
 | `first_name`       | `VARCHAR(50)` `NOT NULL`                                  |  |
 | `last_name`        | `VARCHAR(50)`   `NOT NULL`                                 |       |
 | `email`            | `VARCHAR(100)` `UNIQUE` `NOT NULL `                               |      |
-| `phone`            | `VARCHAR(15)`                                  | hopefully this will be enough characters      |
-| `hire_date`        | `DATE`                                         | The first day of work of emplyee       |
-| `employee_status`  | `ENUM('full_time', 'part_time', 'contractor')`  | Employment Status within our company|
+| `phone`            | `VARCHAR(15)`   `NULL`                              | hopefully this will be enough characters      |
+| `hire_date`        | `DATE`                `NULL`                         | The first day of work of emplyee       |
+| `employee_status`  | `ENUM('full_time', 'part_time', 'contractor')` `NULL` | Employment Status within our company|
 | `department_id`    | `INT ` `NULL`                                         | `FOREIGN KEY` linking to [`department`](#2-department-table)   |
 | `role_id`          | `INT `      `NULL`                                    | `FOREIGN KEY` linking to [`role`](#3-role-table)       |
 | `contract_start_date`| `DATE`      `NOT NULL`                                 | The start date of current contract, the idea behaind it is if we have employees who continue to work after first contract to have this field changed - change from part to full time i.e.  |
@@ -51,14 +51,14 @@ The `contract_` entries are the result of my not inplemented ide of contract tab
 Here whe hold simply name of department, scope of project does not require any more data, but this approach make us flexible and expanding database will be easier.
  | Field              | Type                                           | Comment          |
 |--------------------|------------------------------------------------|------------------|
-| `department_id` | `INT` | `PRIMARY KEY` |
+| `department_id` | `INT` `NOT NULL` | `PRIMARY KEY` |
 | `department_name` | `VARCHAR(100)` `NOT NULL` | just a simle name is enough for our needs |
 
 ### 3. Role table
 Here we have the same idea as with the previous table, just to keep data more flexivle and easy to edit or expand in the future.
  | Field              | Type                                           | Comment          |
 |--------------------|------------------------------------------------|------------------|
-| `role_id` | `INT` | `PRIMARY KEY` |
+| `role_id` | `INT` `NOT NULL` | `PRIMARY KEY` |
 | `role_name` | `VARCHAR(100)` `NOT NULL` | just a simle name is enough for our needs |
 
 ### 4. Attendance table 
@@ -66,14 +66,14 @@ This is one of the more important tables, here we will record if and how long em
 
 | Field              | Type                                         | Comment             |
 |--------------------|----------------------------------------------|---------------------|
-| `attendance_id`     | `INT`             |     `PRIMARY KEY`                |
-| `employee_id`       | `INT`                                        | `FOREIGN KEY` linking to [`employee`](#1-employee-table)  |
+| `attendance_id`     | `INT`  `NOT NULL`           |     `PRIMARY KEY`                |
+| `employee_id`       | `INT`  `NULL`                                      | `FOREIGN KEY` linking to [`employee`](#1-employee-table)  |
 | `date`             | `DATE` `NOT NULL`                              | The date of attendance |
 | `time_in`          | `TIME` `NULL`                                  | Time when the employee checked in, `NULL` in case of abscence |
 | `time_out`         | `TIME` `NULL`                                  | Time when the employee checked out, `NULL` in case of abscence |
 | `work_hours`       | `DECIMAL(4, 2)` `NOT NULL`                     | Total hours worked without overtime, `0.0` in case of abscence   |
 | `overtime_hours`   | `DECIMAL(4, 2)` `NOT NULL`                     | Extra hours worked,  `0.0` in case of abscence    |
-| `employee_status`  | `ENUM('present', 'absent', 'leave', 'remote')`| Status of attendance, that will be important for calculating salary |
+| `employee_status`  | `ENUM('present', 'absent', 'leave', 'remote')` `NULL`| Status of attendance, that will be important for calculating salary |
 
 
 ### 5. Performance table
