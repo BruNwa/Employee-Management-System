@@ -1,7 +1,7 @@
 # Employee-Management-System Database structure 
 
 ## Overwiew
-Before describing stucture of database let us have a look at the visualisation of it to better comprehend the idea behind it:
+Before describing stucture of database let us have a look at the visualisation of it to better comprehend the idea behind it, notice that all the names are in lowercase and singular:
 ![Alt Text](database_structure.png)
 
 ## Database employee_management_system - table structure
@@ -17,17 +17,32 @@ This will clarify the meaning and when to use each constraint, and it will stand
  This table is heart and soul of our database:
  | Field              | Type                                           | Comment          |
 |--------------------|------------------------------------------------|------------------|
-| `employee_id`      | `int`                                          | `PRIMARY KEY` |
-| `first_name`       | `varchar(50)`                                  | |
-| `last_name`        | `varchar(50)`                                  |       |
-| `email`            | `varchar(100)`                                 |      |
-| `phone`            | `varchar(15)`                                  |       |
-| `hire_date`        | `date`                                         | The first day of work of emplyee       |
-| `employee_status`  | `enum('full_time', 'part_time', 'contractor')`  | Employment Status within our company|
-| `department_id`    | `int`                                          | `FOREIGN KEY` linking us to [`department`](#2-department-table)  table   |
-| `role_id`          | `int`                                          | `FOREIGN KEY`         |
-| `contract_start_date`| `date`                                       | Contract Start Date|
-| `contract_end_date`| `date`                                         | it should be `NULL` unless the contract already ended |
-| `contract_status`  | `enum('active', 'expired', 'terminated')`      | Contract Status in case we want to keep records of employees that are not longer working with us  |
+| `employee_id`      | `INT `                                          | `PRIMARY KEY` |
+| `first_name`       | `VARCHAR(50)`                                  |  |
+| `last_name`        | `VARCHAR(50)`                                  |       |
+| `email`            | `VARCHAR(100)`                                 |      |
+| `phone`            | `VARCHAR(15)`                                  | hopefully this will be enough characters      |
+| `hire_date`        | `DATE`                                         | The first day of work of emplyee       |
+| `employee_status`  | `ENUM('full_time', 'part_time', 'contractor')`  | Employment Status within our company|
+| `department_id`    | `INT `                                          | `FOREIGN KEY` linking to [`department`](#2-department-table)   |
+| `role_id`          | `INT `                                          | `FOREIGN KEY` linking to [`role`](#3-role-table)       |
+| `contract_start_date`| `DATE`                                       | The start date of current contract, the idea behaind it is if we have employees who continue to work after first contract to have this field changed - change from part to full time i.e.  |
+| `contract_end_date`| `DATE`                                         | it should be `NULL` unless the contract already ended |
+| `contract_status`  | `ENUM('active', 'expired', 'terminated')`      | Contract Status in case we want to keep records of employees that are not longer working with us  |
+
+The `contract_` entries are the result of my not inplemented ide of contract table, now it looks a bit redundant, but the functionality can be expaded for employees who start 
 
 ### 2. Department table
+Here whe hold simply name of department, scope of project does not require any more data, but this approach make us flexible and expanding database will be easier.
+ | Field              | Type                                           | Comment          |
+|--------------------|------------------------------------------------|------------------|
+| `department_id` | `INT` | `PRIMARY KEY` |
+| `department_name` | `VARCHAR(100)` | just a simle name is enough for our needs |
+
+### 3. Role table
+Here we have the same idea as with the previous table, just to keep data more flexivle and easy to edit or expand in the future.
+ | Field              | Type                                           | Comment          |
+|--------------------|------------------------------------------------|------------------|
+| `role_id` | `INT` | `PRIMARY KEY` |
+| `role_name` | `VARCHAR(100)` | just a simle name is enough for our needs |
+### 
