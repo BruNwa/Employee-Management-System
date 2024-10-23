@@ -1,11 +1,11 @@
 -- DROP DATABASE IF EXISTS employee_management_system;
 CREATE DATABASE IF NOT EXISTS employee_management_system;
 
-CREATE USER IF NOT EXISTS 'admin'@'localhost' IDENTIFIED BY 'admin';
-GRANT ALL PRIVILEGES ON employee_management_system.* TO 'admin'@'localhost';
+CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED BY 'mthree';
+GRANT ALL PRIVILEGES ON employee_management_system.* TO 'admin'@'%';
 
-CREATE USER IF NOT EXISTS 'employee'@'localhost' IDENTIFIED BY 'employee';
-GRANT SELECT, UPDATE ON employee_management_system.* TO 'employee'@'localhost';
+CREATE USER IF NOT EXISTS 'employee'@'%' IDENTIFIED BY 'employee';
+GRANT SELECT, UPDATE ON employee_management_system.* TO 'employee'@'%';
 FLUSH PRIVILEGES; 
 
 USE employee_management_system;
