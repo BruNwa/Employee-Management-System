@@ -1,0 +1,9 @@
+{% extends "base.html" %} {% block content %} {% if payslip_data %}
+<h3>Payslip for {{ payslip_data.name }}</h3>
+<p>Basic Salary: ${{ payslip_data.basic_salary }}</p>
+<p>Total Days: {{ payslip_data.total_days }}</p>
+<p>Days Present: {{ payslip_data.present_days }}</p>
+<p>Final Salary: ${{ payslip_data.final_salary }}</p>
+{% else %}
+<p>No payslip data available.</p>
+{% endif %} {% endblock %}

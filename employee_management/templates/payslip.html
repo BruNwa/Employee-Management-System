@@ -1,0 +1,16 @@
+{% extends "base.html" %} {% block content %}
+<h2>Generate Payslip</h2>
+<form method="POST">
+  <label>Employee ID:</label><br />
+  <input type="number" name="employee_id" required /><br /><br />
+
+  <button type="submit">Generate Payslip</button>
+</form>
+
+{% if payslip_data %}
+<h3>Payslip for {{ payslip_data.name }}</h3>
+<p>Basic Salary: ${{ payslip_data.basic_salary }}</p>
+<p>Total Days: {{ payslip_data.total_days }}</p>
+<p>Days Present: {{ payslip_data.present_days }}</p>
+<p>Final Salary: ${{ payslip_data.final_salary }}</p>
+{% endif %} {% endblock %}

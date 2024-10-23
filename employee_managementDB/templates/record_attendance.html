@@ -1,0 +1,12 @@
+{% extends "base.html" %} {% block content %}
+<h2>Record Attendance</h2>
+<form method="POST">
+  <label>Employee ID:</label><br />
+  <input type="number" name="employee_id" required /><br /><br />
+
+  <label>Status (Present/Absent):</label><br />
+  <input type="text" name="status" required /><br /><br />
+
+  <button type="submit">Record Attendance</button>
+</form>
+{% endblock %}
