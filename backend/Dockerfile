@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     dos2unix \
     netcat \
+	bash \
     vim-tiny \
     openssh-server \
     && apt-get clean \
@@ -31,7 +32,9 @@ COPY . .
 
 
 RUN dos2unix /app/entrypoint.sh
+RUN dos2unix /app/service_restart.sh
 RUN chmod +x /app/entrypoint.sh
+RUN chmod +x /app/service_restart.sh
 
 
 EXPOSE 8000
