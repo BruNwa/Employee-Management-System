@@ -12,7 +12,7 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=mysql://admin:mthree@db:3306/employeedb
+      - DATABASE_URL=mysql://admin:mthree@db:3306/employee_management_system
     entrypoint: ["/app/entrypoint.sh"]  
 
 
