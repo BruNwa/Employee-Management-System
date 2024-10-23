@@ -1,11 +1,12 @@
 #!/bin/bash
-set -e
-echo "Waiting for database..."
+
+/usr/sbin/sshd
 while ! nc -z db 3306; do
+  echo "Waiting for MySQL to be ready..."
   sleep 1
 done
-echo "Database is up and running!"
-echo "Running migrations..."
-flask db upgrade
-echo "Starting Flask application..."
+
+echo "MySQL is ready. Applying migrations..."
+flask db upgrade  
+echo "Starting Gunicorn..."
 exec gunicorn -w 4 -b 0.0.0.0:8000 "app:app"
