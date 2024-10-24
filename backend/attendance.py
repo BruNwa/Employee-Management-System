@@ -60,6 +60,9 @@ def check_in(employee_id):
     if existing_attendance and existing_attendance.time_in:
         return jsonify({"message": "Already checked in today!"}), 200
 
+    if existing_attendance and existing_attendance.employee_status in ['absent', 'leave']:
+        return jsonify({"error": "Cannot check out while status is 'absent' or 'leave'."}), 400
+
     # Create a new attendance record or update if record exists
     if not existing_attendance:
         attendance = Attendance(
