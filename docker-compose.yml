@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  my_network:
+    driver: bridge
+
 services:
   backend:
     build:
@@ -7,14 +11,15 @@ services:
       dockerfile: Dockerfile  
     container_name: emp_backend
     ports:
-      - "8000:8000" #hostPort=>containerPort
       - "2222:22"
     depends_on:
       - db
     environment:
-      - DATABASE_URL=mysql://admin:mthree@db:3306/employee_management_system
+      - DATABASE_URI_ADMIN=mysql+pymysql://admin:mthree@sql:3306/employee_management_system
+      - DATABASE_URI_EMPLOYEE=mysql+pymysql://employee:employee@sql:3306/employee_management_system
     entrypoint: ["/app/entrypoint.sh"]  
-
+    networks:
+      - my_network
 
   db:
     image: mysql:8.0
@@ -27,7 +32,8 @@ services:
       - ./db_init/init.sql:/docker-entrypoint-initdb.d/init.sql  
     ports:
       - "3307:3306"  
-
+    networks:
+      - my_network
   
   frontend:
     image: nginx:alpine
@@ -38,6 +44,8 @@ services:
       - ./frontend/build:/usr/share/nginx/html  
     depends_on:
       - backend
+    networks:
+      - my_network
 
 volumes:
   db_data:
