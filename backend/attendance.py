@@ -44,15 +44,14 @@ def view_attendance():
         for record in attendance_records
     ]
 
+    db.session.commit()
+
     return jsonify(attendance_list), 200
 
 # Check-in function
-@ab.route('/check_in', methods=['POST'])
-def check_in():
-    employee_id = request.json.get('employee_id')
-    if not employee_id:
-        return jsonify({"error": "Employee ID is required"}), 400
-
+@ab.route('/check_in/<int:employee_id>', methods=['POST'])
+def check_in(employee_id):
+   
     today = datetime.now().date()
 
     # Check if the employee already checked in today
@@ -66,12 +65,13 @@ def check_in():
         attendance = Attendance(
             employee_id=employee_id,
             date=today,
-            time_in=datetime.now(),
+            time_in=datetime.now().time(),
             work_hours=0,
             overtime_hours=0,
             employee_status='present'
         )
         db.session.add(attendance)
+        
     else:
         existing_attendance.time_in = datetime.now()
 
@@ -81,12 +81,9 @@ def check_in():
 
 
 # Check-out function
-@ab.route('/check_out', methods=['POST'])
-def check_out():
-    employee_id = request.json.get('employee_id')
-    if not employee_id:
-        return jsonify({"error": "Employee ID is required"}), 400
-
+@ab.route('/check_out/<int:employee_id>', methods=['POST'])
+def check_out(employee_id):
+    
     today = datetime.now().date()
 
     # Find the employee's attendance record for today
@@ -99,9 +96,13 @@ def check_out():
         return jsonify({"message": "Already checked out today!"}), 200
 
     # Set the check-out time and calculate work hours
-    attendance.time_out = datetime.now()
-    time_diff = attendance.time_out - attendance.time_in
-    attendance.work_hours = round(time_diff.total_seconds() / 3600, 2)
+    attendance.time_out = datetime.now().time()
+    datetime_in = datetime.combine(today, attendance.time_in)
+    datetime_out = datetime.combine(today, attendance.time_out)    
+    time_diff = datetime_out - datetime_in
+    total_time= round(time_diff.total_seconds() / 3600, 2)
+    attendance.work_hours = min(8.0, total_time)
+    attendance.overtime_hours= max(0.0, total_time-8.0)
 
     db.session.commit()
 
