@@ -7,6 +7,7 @@ while ! nc -z db 3306; do
 done
 echo "MySQL is ready. Applying migrations..."
 flask db upgrade  
+export FLASK_ENV=development
 echo "Starting flask app..."
 python3 app.py &
 FLASK_PID=$!  #get the app process id 
