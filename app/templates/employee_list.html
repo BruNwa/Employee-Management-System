@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Employees</h1>
+    <a href="{{ url_for('new_employee') }}">Add New Employee</a>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Role</th>
+                <th>Department</th>
+                <th>Phone</th>
+                <th>Employment Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+            <tr>
+                <td>{{ employee.employee_id }}</td>
+                <td>{{ employee.first_name }}</td>
+                <td>{{ employee.last_name }}</td>
+                <td>{{ employee.role.role_name }}</td>
+                <td>{{ employee.department.department_name }}</td>
+                <td>{{ employee.phone }}</td>
+                <td>{{ employee.employee_status }}</td>
+                <td>
+                    <a href="{{ url_for('update_employee', id=employee.employee_id) }}">Edit</a> |
+                    <form method="POST" action="{{ url_for('delete_employee', id=employee.employee_id) }}" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

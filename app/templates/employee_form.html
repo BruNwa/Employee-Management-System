@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ 'Update' if employee else 'Create' }} Employee</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+    <h1>{{ 'Update' if employee else 'Create' }} Employee</h1>
+    <form method="POST">
+        <label for="first_name">First Name:</label>
+        <input type="text" name="first_name" value="{{ employee.first_name if employee else '' }}" required><br>
+
+        <label for="last_name">Last Name:</label>
+        <input type="text" name="last_name" value="{{ employee.last_name if employee else '' }}" required><br>
+
+        <label for="email">Email:</label>
+        <input type="email" name="email" value="{{ employee.email if employee else '' }}" required><br>
+
+        <label for="phone">Phone:</label>
+        <input type="text" name="phone" value="{{ employee.phone if employee else '' }}"><br>
+
+        <label for="hire_date">Hire Date:</label>
+        <input type="date" name="hire_date" value="{{ employee.hire_date if employee else '' }}" required><br>
+
+        <label for="employee_status">Employment Status:</label>
+        <select name="employee_status" required>
+            <option value="full_time" {% if employee and employee.employee_status == 'full_time' %} selected {% endif %}>Full-Time</option>
+            <option value="part_time" {% if employee and employee.employee_status == 'part_time' %} selected {% endif %}>Part-Time</option>
+            <option value="contractor" {% if employee and employee.employee_status == 'contractor' %} selected {% endif %}>Contractor</option>
+        </select><br>
+
+        <label for="department_id">Department:</label>
+        <select name="department_id">
+            {% for department in departments %}
+            <option value="{{ department.department_id }}" {% if employee and employee.department_id == department.department_id %} selected {% endif %}>{{ department.department_name }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label for="role_id">Role:</label>
+        <select name="role_id">
+            {% for role in roles %}
+            <option value="{{ role.role_id }}" {% if employee and employee.role_id == role.role_id %} selected {% endif %}>{{ role.role_name }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label for="contract_start_date">Contract Start Date:</label>
+        <input type="date" name="contract_start_date" value="{{ employee.contract_start_date if employee else '' }}" required><br>
+
+        <label for="contract_end_date">Contract End Date:</label>
+        <input type="date" name="contract_end_date" value="{{ employee.contract_end_date if employee else '' }}"><br>
+
+        <label for="contract_status">Contract Status:</label>
+        <select name="contract_status">
+            <option value="active" {% if employee and employee.contract_status == 'active' %} selected {% endif %}>Active</option>
+            <option value="expired" {% if employee and employee.contract_status == 'expired' %} selected {% endif %}>Expired</option>
+            <option value="terminated" {% if employee and employee.contract_status == 'terminated' %} selected {% endif %}>Terminated</option>
+        </select><br>
+
+        <button type="submit">{{ 'Update' if employee else 'Create' }}</button>
+    </form>
+</body>
+</html>
