@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create KPI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Create achievement for Performance {{ performance_id }}</h1>
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label for="achievement_description">Description:</label>
+        <input type="text" name="achievement_description" id="description" required>
+        
+        <label for="achievement_date">Review Date:</label>
+        <input type="date" name="achievement_date" id="review_date" required>
+        
+        <input type="hidden" name="performance_id" value="{{ performance_id }}">
+        
+        <button type="submit">Create achievement</button>
+    </form>
+</body>
+</html>

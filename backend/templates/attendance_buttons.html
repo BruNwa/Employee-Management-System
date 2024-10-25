@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check In / Check Out</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+
+        h1 {
+            margin-bottom: 40px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        .success-message {
+            color: green;
+        }
+
+        .error-message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Check In / Check Out</h1>
+
+    <form id="check-in-form" method="POST">
+        <button type="button" onclick="checkIn()">Check In</button>
+    </form>
+
+    <form id="check-out-form" method="POST">
+        <button type="button" onclick="checkOut()">Check Out</button>
+    </form>
+
+    <p id="message" class=""></p>
+
+    <script>
+        async function checkIn() {
+            const employeeId = prompt("Enter Employee ID:");
+            if (!employeeId) return;
+
+            const response = await fetch(`/attendance/check_in/${employeeId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+            document.getElementById('message').textContent = data.message || data.error;
+            document.getElementById('message').className = response.ok ? 'success-message' : 'error-message';
+        }
+
+        async function checkOut() {
+            const employeeId = prompt("Enter Employee ID:");
+            if (!employeeId) return;
+
+            const response = await fetch(`/attendance/check_out/${employeeId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const data = await response.json();
+            document.getElementById('message').textContent = data.message || data.error;
+            document.getElementById('message').className = response.ok ? 'success-message' : 'error-message';
+        }
+    </script>
+
+</body>
+</html>

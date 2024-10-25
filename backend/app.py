@@ -3,9 +3,13 @@ from flask import Flask
 #from sqlalchemy.orm import sessionmaker
 import os
 from attendance import ab as attendance_bp
+from performance import pb as performance_bp
 from models import db
+import secrets
 
 app = Flask(__name__)
+app.secret_key = secrets.token_hex(16)
+
 
 db_role = os.getenv('DB_ROLE', 'admin')
 
@@ -19,13 +23,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Optional, to disable war
 
 # Initialize the database with the app
 db.init_app(app)
-
 # Register the attendance blueprint
 app.register_blueprint(attendance_bp, url_prefix='/attendance')
+app.register_blueprint(performance_bp, url_prefix='/performance')
 
 @app.route('/')
 def hello():
-    return "WORRRRRRRRRKKKKKKKKKKIIIIIIIINNNNNNNNNNNGGGGGGGGGGG!"
+    return "work!"
 
 if __name__ == '__main__':
     with app.app_context():

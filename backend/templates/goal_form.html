@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create KPI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Create Goal for Performance {{ performance_id }}</h1>
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    
+    <form method="POST" action="{{ url_for('performance.create_goal') }}">
+        <input type="hidden" name="performance_id" value="{{ performance_id }}">
+        
+        <label for="goal_description">Goal Description:</label>
+        <input type="text" name="goal_description" required>
+        
+        <label for="goal_status">Goal Status:</label>
+        <select name="goal_status" required>
+            <option value="">Select Status</option>
+            <option value="not started">Not Started</option>
+            <option value="in progress">In Progress</option>
+            <option value="achieved">Achieved</option>
+        </select>
+        
+        <button type="submit">Create Goal</button>
+    </form>
+
+    <a href="{{ url_for('performance.view_performance', performance_id=performance_id) }}">
+        <button>Go Back</button>
+    </a>
+</body>
+</html>
