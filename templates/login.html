@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VEEEEERY IMPORTENT employee login</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .video-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);  /* Darkens the video slightly */
+        }
+
+        #myVideo {
+            position: absolute;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            filter: blur(8px);  /* Adds blur to the video */
+        }
+        
+        .page-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.9);  /* Semi-transparent white */
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: 100%;
+            max-width: 400px;
+            transform: translateY(-20px);  /* Slight upward shift */
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+        
+        button {
+            width: 100%;
+            padding: 0.875rem;
+            background-color: #21e90f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: #2f925c;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .error-message {
+            color: #dc3545;
+            margin-top: 1rem;
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 4px;
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+        
+        .success-message {
+            color: #28a745;
+            margin-top: 1rem;
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 4px;
+            background-color: rgba(40, 167, 69, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #333;
+            font-size: 1.75rem;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <video autoplay muted loop id="myVideo">
+            <source src="{{ url_for('static', filename='background.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <div class="page-container">
+        <div class="login-container">
+            <h2>HEEEEELLL YEAAAHH</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">email</label>
+                    <input type="email" id="email" required placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="phone">phone</label>
+                    <input type="tel" id="phone" required placeholder="Enter your phone number">
+                </div>
+                <button type="submit">Sign In</button>
+                <div class="form-footer">
+                    very important info hh
+                </div>
+            </form>
+            <div id="message"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageDiv = document.getElementById('message');
+            const submitButton = e.target.querySelector('button');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Signing in...';
+            
+            try {
+                const response = await axios.post('/login/login', {
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value
+                });
+                
+                // Store employee_id in sessionStorage
+                sessionStorage.setItem("employee_id", response.data.employee_id);
+
+                messageDiv.className = 'success-message';
+                messageDiv.textContent = `Welcome, ${response.data.name}! You have ${response.data.permission} permissions.`;
+                
+                // Redirect based on permission
+                setTimeout(() => {
+                    const redirectPath = response.data.permission === 'admin' 
+                        ? '/admin/dashboard'
+                        : '/employee/dashboard';
+                    window.location.href = redirectPath;
+                }, 1500);
+                
+            } catch (error) {
+                messageDiv.className = 'error-message';
+                messageDiv.textContent = error.response?.data?.error || 'Login failed. Please try again.';
+                submitButton.disabled = false;
+                submitButton.textContent = 'Sign In';
+            }
+        });
+    </script>
+</body>
+</html>
