@@ -6,6 +6,8 @@ GRANT ALL PRIVILEGES ON employee_management_system.* TO 'admin'@'%';
 
 CREATE USER IF NOT EXISTS 'employee'@'%' IDENTIFIED BY 'employee';
 GRANT SELECT, UPDATE ON employee_management_system.* TO 'employee'@'%';
+GRANT INSERT ON employee_management_system.leave TO 'employee'@'localhost';
+GRANT INSERT ON employee_management_system.attendance TO 'employee'@'localhost';
 FLUSH PRIVILEGES; 
 
 USE employee_management_system;
