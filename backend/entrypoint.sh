@@ -13,7 +13,7 @@ python3 app.py &
 FLASK_PID=$!  #get the app process id 
 while true; do
     if ! kill -0 $FLASK_PID >/dev/null 2>&1; then
-        echo "the app has crached, the container is running for debugging."
+        echo "the app has crashed, the container is running for debugging."
         break
     fi
     sleep 5

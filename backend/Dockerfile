@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# SSH Configuration
+
 RUN mkdir /var/run/sshd
 RUN echo 'root:mthree' | chpasswd
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
@@ -37,7 +37,7 @@ RUN chmod +x /app/entrypoint.sh
 RUN chmod +x /app/service_restart.sh
 
 
-EXPOSE 8000
+
 EXPOSE 22
 
 
