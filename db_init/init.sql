@@ -1,15 +1,6 @@
 -- DROP DATABASE IF EXISTS employee_management_system;
 CREATE DATABASE IF NOT EXISTS employee_management_system;
 
-CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED BY 'mthree';
-GRANT ALL PRIVILEGES ON employee_management_system.* TO 'admin'@'%';
-
-CREATE USER IF NOT EXISTS 'employee'@'%' IDENTIFIED BY 'employee';
-GRANT SELECT, UPDATE ON employee_management_system.* TO 'employee'@'%';
-GRANT INSERT ON employee_management_system.leave TO 'employee'@'%';
-GRANT INSERT ON employee_management_system.attendance TO 'employee'@'%';
-FLUSH PRIVILEGES; 
-
 USE employee_management_system;
 
 CREATE TABLE IF NOT EXISTS `department` (
@@ -403,4 +394,11 @@ INSERT INTO `leave` (employee_id, leave_type_id, leave_start, leave_end, leave_s
 (10, 1, '2024-09-28', '2024-10-03', 'approved', 1);
 
 
+CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED BY 'mthree';
+GRANT ALL PRIVILEGES ON employee_management_system.* TO 'admin'@'%';
 
+CREATE USER IF NOT EXISTS 'employee'@'%' IDENTIFIED BY 'employee';
+GRANT SELECT, UPDATE ON employee_management_system.* TO 'employee'@'%';
+GRANT INSERT ON employee_management_system.leave TO 'employee'@'%';
+GRANT INSERT ON employee_management_system.attendance TO 'employee'@'%';
+FLUSH PRIVILEGES; 
