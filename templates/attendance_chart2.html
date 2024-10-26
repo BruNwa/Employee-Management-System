@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, content=width=device-width, initial-scale=1.0">
+    <title>Attendance Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Limit the size of the canvas */
+        #attendanceChart {
+            width: 80%;  /* Make it responsive */
+            max-width: 400px;  /* Maximum width */
+            max-height: 400px;  /* Maximum height */
+            height: auto;  /* Maintain aspect ratio */
+            margin: 0 auto;  /* Center the chart horizontally */
+            border: 1px solid #ccc; /* Optional: Add a border for visibility */
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .legend-item {
+            margin: 0 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas for the chart -->
+    <canvas id="attendanceChart" width="400" height="400"></canvas>
+
+    <!-- Legend for the chart -->
+    <div class="legend" id="legend"></div>
+
+    <!-- Script to fetch data and render the chart -->
+    <script>
+        async function fetchAttendanceData() {
+            console.log('Fetching attendance data...'); // Check if this executes
+            try {
+                const response = await fetch('/attendance/data');
+                const data = await response.json();
+
+                console.log('Fetched Data:', data); // Log the fetched data
+
+                // Validate data structure
+                if (!Array.isArray(data) || data.length === 0 || !data.every(item => item.status && item.count)) {
+                    console.error('Invalid data format:', data);
+                    return;
+                }
+
+                const labels = data.map(item => item.status);
+                const counts = data.map(item => item.count);
+
+                console.log('Labels:', labels); // Debugging
+                console.log('Counts:', counts); // Debugging
+
+                drawCurvedBarChart(labels, counts);
+            } catch (error) {
+                console.error('Error fetching attendance data:', error);
+            }
+        }
+
+        function drawCurvedBarChart(labels, counts) {
+            const canvas = document.getElementById('attendanceChart');
+            const ctx = canvas.getContext('2d');
+            const total = counts.reduce((a, b) => a + b, 0);
+            console.log('Total Count:', total); // Log total for validation
+
+            if (total === 0) {
+                console.error('Total is zero, cannot draw chart');
+                return;
+            }
+
+            const centerX = canvas.width / 2; // Center x coordinate
+            const centerY = canvas.height / 2; // Center y coordinate
+            const innerRadii = [70, 80, 90, 100]; // Inner radii for each bar
+            const outerRadii = [130, 140, 150, 160]; // Outer radii for each bar
+            const startAngle = 1 * (Math.PI / 180); // Start from 1 degree (convert degrees to radians)
+
+            // Color array for legend and arcs
+            const colors = ['#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0'];
+
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Create a legend for the chart
+            const legendContainer = document.getElementById('legend');
+            legendContainer.innerHTML = ''; // Clear existing legend items
+
+            // Draw each curved bar
+            labels.forEach((label, index) => {
+                // Use a fixed starting angle for each segment
+                const angleStart = startAngle; // All arcs start at the same angle
+                // Calculate the end angle based on the value of the count
+                const angleEnd = angleStart + (counts[index] / total) * (2 * Math.PI); // End angle based on value
+                
+                // Determine inner and outer radius for the current segment
+                const innerRadius = innerRadii[index % innerRadii.length];
+                const outerRadius = outerRadii[index % outerRadii.length];
+
+                // Draw the arc for the outer edge
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, outerRadius, angleStart, angleEnd, false);
+                ctx.lineWidth = 12; // Increase the width of the curve
+                ctx.strokeStyle = colors[index % colors.length]; // Use color array for segments
+                ctx.stroke();
+
+                // Draw the arc for the inner edge
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, innerRadius, angleEnd, angleStart, true);
+                ctx.lineWidth = 12; // Increase the width of the curve
+                ctx.strokeStyle = '#fff'; // Background color (to create the effect of hollow)
+                ctx.stroke();
+
+                // Create legend item
+                const legendItem = document.createElement('div');
+                legendItem.classList.add('legend-item');
+                legendItem.innerHTML = `<div class="legend-color" style="background-color: ${colors[index % colors.length]};"></div>${label}`;
+                legendContainer.appendChild(legendItem);
+            });
+        }
+
+        window.onload = fetchAttendanceData;
+    </script>
+
+</body>
+</html>

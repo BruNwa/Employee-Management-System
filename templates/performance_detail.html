@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Details</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Performance Details for Employee {{ performance.employee_id }}</h1>
+
+    <h2>Review Information</h2>
+    <p><strong>Performance ID:</strong> {{ performance.performance_id }}</p>
+    <p><strong>Review Score:</strong> {{ performance.review_score }}</p>
+    <p><strong>Reviewer ID:</strong> {{ performance.reviewer_id }}</p>
+    <p><strong>Review Date:</strong> {{ performance.review_date }}</p>
+
+    <h2>KPIs</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>KPI ID</th>
+                <th>Description</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for kpi in kpis %}
+            <tr>
+                <td>{{ kpi.kpi_id }}</td>
+                <td>{{ kpi.kpi_description }}</td>
+                <td>{{ kpi.kpi_score }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if not kpis %}
+        <p>No KPIs found for this performance review.</p>
+    {% endif %}
+
+    <a href="{{ url_for('performance.create_kpi', performance_id=performance.performance_id) }}">
+        <button>Add KPI</button>
+    </a>
+
+
+    <h2>Goals</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Goal ID</th>
+                <th>Description</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for goal in goals %}
+            <tr>
+                <td>{{ goal.goal_id }}</td>
+                <td>{{ goal.goal_description }}</td>
+                <td>{{ goal.goal_status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if not goals %}
+        <p>No goals found for this performance review.</p>
+    {% endif %}
+
+    <a href="{{ url_for('performance.create_goal', performance_id=performance.performance_id) }}">
+        <button>Add goal</button>
+    </a>
+
+    <h2>Achievements</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Achievement ID</th>
+                <th>Description</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for achievement in achievements %}
+            <tr>
+                <td>{{ achievement.achievement_id }}</td>
+                <td>{{ achievement.achievement_description }}</td>
+                <td>{{ achievement.achievement_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if not achievements %}
+        <p>No achievements found for this performance review.</p>
+    {% endif %}
+
+    <a href="{{ url_for('performance.create_achievement', performance_id=performance.performance_id) }}">
+        <button>Add goal</button>
+    </a>
+
+
+    <a href="{{ url_for('performance.list_performance') }}">
+        <button>Go Back</button>
+    </a>
+
+</body>
+</html>
