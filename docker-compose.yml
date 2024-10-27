@@ -1,51 +1,83 @@
-version: '3.8'
-
 networks:
-  my_network:
+  private_network:
     driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1500
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+  public_network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1500
 
 services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile  
+      dockerfile: Dockerfile
     container_name: emp_backend
     ports:
       - "2222:22"
     depends_on:
       - db
     environment:
-      - DATABASE_URI_ADMIN=mysql+pymysql://admin:mthree@sql:3306/employee_management_system
-      - DATABASE_URI_EMPLOYEE=mysql+pymysql://employee:employee@sql:3306/employee_management_system
-    entrypoint: ["/app/entrypoint.sh"]  
+      - DATABASE_URI_ADMIN=mysql+pymysql://admin:Mthree&C402@172.20.0.11:3306/employee_management_system
+      - DATABASE_URI_EMPLOYEE=mysql+pymysql://employee:Mthree&&C402@172.20.0.11:3306/employee_management_system
+    entrypoint: ["/app/entrypoint.sh"]
     networks:
-      - my_network
+      - public_network
+      - private_network
+    deploy:
+      resources:
+        limits:
+          cpus: "2"           
+          memory: "8G"        
+        reservations:
+          cpus: "1"           
+          memory: "4G"
 
   db:
     image: mysql:8.0
     container_name: db_service
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: VeryHardPaSSwordToFindhihi
       MYSQL_DATABASE: employee_management_system
     volumes:
-      - ./db_data:/var/lib/mysql 
-      - ./db_init/init.sql:/docker-entrypoint-initdb.d/init.sql  
-    ports:
-      - "3306:3306"  
+      - ./db_data:/var/lib/mysql
+      - ./db_init/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - my_network
-  
+      private_network:
+          ipv4_address: 172.20.0.11
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"         
+          memory: "10G"       
+        reservations:
+          cpus: "1"           
+          memory: "6G"
+
+
   frontend:
     image: nginx:alpine
     container_name: frontend_service
     ports:
-      - "3000:80" 
+      - "3000:80"
     volumes:
-      - ./frontend/build:/usr/share/nginx/html  
+      - ./frontend/build:/usr/share/nginx/html
     depends_on:
       - backend
     networks:
-      - my_network
+      - public_network
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"         
+          memory: "2G"        
+        reservations:
+          cpus: "0.25"        
+          memory: "1G"
 
 volumes:
   db_data:
