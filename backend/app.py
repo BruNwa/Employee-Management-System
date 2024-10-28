@@ -4,6 +4,7 @@ from flask import Flask
 import os
 from attendance import ab as attendance_bp
 from performance import pb as performance_bp
+#from leaves import lb as leaves_bp
 from models import db
 import secrets
 
@@ -26,6 +27,7 @@ db.init_app(app)
 # Register the attendance blueprint
 app.register_blueprint(attendance_bp, url_prefix='/attendance')
 app.register_blueprint(performance_bp, url_prefix='/performance')
+#app.register_blueprint(leaves_bp, url_prefix='/leaves')
 
 @app.route('/')
 def hello():

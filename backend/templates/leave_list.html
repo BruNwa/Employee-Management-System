@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Applications</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <h1>Leave Applications</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Employee ID</th>
+                <th>Employee Name</th>
+                <th>Leave Type</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in leaves %}
+            <tr>
+                <td>{{ leave.employee_id }}</td>
+                <td>{{ leave.employee.first_name }} {{ leave.employee.last_name }}</td>
+                <td>{{ leave.leave_type.leave_type_name }}</td>
+                <td>{{ leave.leave_start.strftime('%Y-%m-%d') }}</td>
+                <td>{{ leave.leave_end.strftime('%Y-%m-%d') }}</td>
+                <td>{{ leave.leave_status }}</td>
+                <td>
+                    {% if leave.leave_status == 'pending' %}
+                        <form action="{{ url_for('leaves.approve_leave', leave_id=leave.leave_id) }}" method="post" style="display:inline;">
+                            <button type="submit">Approve</button>
+                        </form>
+                        <form action="{{ url_for('leaves.reject_leave', leave_id=leave.leave_id) }}" method="post" style="display:inline;">
+                            <button type="submit">Reject</button>
+                        </form>
+                    {% else %}
+                        <span>No actions available</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>

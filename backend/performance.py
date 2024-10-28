@@ -44,7 +44,7 @@ def create_performance():
 
         if review_score is None or not (1 <= review_score <= 10):
             flash('Review score must be between 1 and 10. Please enter a valid score.', 'error')
-            return render_template('performance_form.html', performance_id=performance_id)
+            return render_template('performance_form.html', action='Create')
 
         new_performance = Performance(
             employee_id=employee_id,
@@ -110,6 +110,34 @@ def create_kpi():
     performance_id = request.args.get('performance_id')
     return render_template('kpi_form.html', performance_id=performance_id)
 
+# Update - Edit an Existing KPI
+@pb.route('/kpi/edit/<int:kpi_id>', methods=['GET','POST'])
+def edit_kpi(kpi_id):
+    kpi=KPI.query.get_or_404(kpi_id)
+
+    if request.method == 'POST':
+        kpi.kpi_description = request.form.get('description',type=str)
+        kpi.kpi_score = request.form.get('score',type=float)
+        performance_id = request.form.get('performance_id',type=int)
+
+        if kpi.kpi_score is None or not (1 <= kpi.kpi_score <= 5):
+            flash('KPI score must be between 1 and 5. Please enter a valid score.', 'error')
+            return render_template('kpi_form.html', performance_id=performance_id)
+
+        db.session.commit()
+        flash('KPI edited successfully!', 'success')
+        return redirect(url_for('performance.view_performance', performance_id=performance_id)) 
+    return render_template('kpi_form.html', performance_id=kpi.performance_id, kpi=kpi)
+
+@pb.route('/kpi/delete/<int:kpi_id>', methods=['POST'])
+def delete_kpi(kpi_id):
+    kpi=KPI.query.get_or_404(kpi_id)
+
+    db.session.delete(kpi)
+    db.session.commit()
+
+    flash('KPI deleted sucesssfully!', 'success')
+    return redirect(url_for('performance.view_performance',performance_id=kpi.performance_id))
 
 # Create a new goal
 @pb.route('/goal/new', methods=['GET', 'POST'])
@@ -138,6 +166,37 @@ def create_goal():
     performance_id = request.args.get('performance_id')
     return render_template('goal_form.html', performance_id=performance_id)
 
+#edit goal
+@pb.route('/goal/edit/<int:goal_id>', methods=['GET', 'POST'])
+def edit_goal(goal_id):
+    goal = Goal.query.get_or_404(goal_id)
+    valid_statuses = ['not started', 'in progress', 'achieved']
+
+    if request.method == 'POST':
+        goal_description = request.form.get('goal_description', type=str)
+        goal_status = request.form.get('goal_status', type=str)
+
+        if goal_status not in valid_statuses:
+            flash(f'Invalid goal status! Please choose one of the following: {", ".join(valid_statuses)}', 'error')
+            return render_template('goal_form.html', goal=goal, performance_id=goal.performance_id)
+        
+        goal.goal_description = goal_description
+        goal.goal_status = goal_status
+        db.session.commit()
+        flash('Goal updated successfully!', 'success')
+        return redirect(url_for('performance.view_performance', performance_id=goal.performance_id))
+
+    return render_template('goal_form.html', goal=goal, performance_id=goal.performance_id)
+
+#delete goal
+@pb.route('/goal/delete/<int:goal_id>', methods=['POST'])
+def delete_goal(goal_id):
+    goal = Goal.query.get_or_404(goal_id)
+    db.session.delete(goal)
+    db.session.commit()
+    flash('Goal deleted successfully', 'success')
+    return redirect(url_for('performance.view_performance', performance_id=goal.performance_id))
+
 # Create a new Achievement
 @pb.route('/achievement/new', methods=['GET', 'POST'])
 def create_achievement():
@@ -165,5 +224,33 @@ def create_achievement():
     performance_id = request.args.get('performance_id')
     return render_template('achievement_form.html', performance_id=performance_id)
 
+#edit an achievement
+@pb.route('/achievement/edit/<int:achievement_id>', methods=['GET', 'POST'])
+def edit_achievement(achievement_id):
+    achievement = Achievement.query.get_or_404(achievement_id)
 
-    
+    if request.method == "POST":
+        achievement_description = request.form.get('achievement_description',type=str)
+        achievement_date = request.form.get('achievement_date',type=str)
+
+        try:
+            achievement_date = datetime.strptime(achievement_date, '%Y-%m-%d')
+        except ValueError:
+            flash('Invalid date format!', 'danger')
+            return render_template('achievement_form.html', achievement=achievement, performance_id=achievement.performance_id)
+
+        achievement.achievement_description = achievement_description
+        achievement.achievement_date = achievement_date
+        db.session.commit()
+        flash('Achievement updated successfully!', 'success')
+        return redirect(url_for('performance.view_performance', performance_id=achievement.performance_id))
+    return render_template('achievement_form.html', achievement=achievement, performance_id=achievement.performance_id)
+
+#delete an achievement
+@pb.route('/achievement/delete/<int:achievement_id>', methods=['GET', 'POST'])
+def delete_achievement(achievement_id):
+    achievement = Achievement.query.get_or_404(achievement_id)    
+    db.session.delete(achievement)
+    db.session.commit()
+    flash('Achievement deleted successfully!', 'success')
+    return redirect(url_for('performance.view_performance', performance_id=achievement.performance_id))

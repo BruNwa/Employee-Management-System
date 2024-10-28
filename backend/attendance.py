@@ -32,35 +32,7 @@ def view_attendance():
 
 
     return render_template('attendance_list.html', attendance_records=attendance_records), 200
-'''
-@ab.route('/', methods=['GET'])
-def view_attendance():
-    # Get query parameters
-    employee_id = request.args.get('employee_id', type=int)
-    date_str = request.args.get('date', type=str)
 
-    # Initialize a query
-    query = Attendance.query
-
-    # Filter by employee_id if provided
-    if employee_id:
-        query = query.filter_by(employee_id=employee_id)
-
-    # Filter by date if provided
-    if date_str:
-        try:
-            # Parse the date string to a date object
-            date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
-            query = query.filter_by(date=date_obj)
-        except ValueError:
-            return jsonify({"error": "Invalid date format. Use YYYY-MM-DD."}), 400
-
-    # Get all filtered attendance records
-    attendance_records = query.all()
-
-    # Render the attendance_list.html template with attendance records
-    return render_template('attendance_list.html', attendance_records=attendance_records)
-'''
 
 
 # Check-in function
@@ -142,3 +114,25 @@ def check_out(employee_id):
 
     return jsonify({"message": "Check-out successful!"}), 200
 
+
+
+@ab.route('/data', methods=['GET'])
+def get_attendance_data():
+    # Query to count attendance by status
+    attendance_data = Attendance.query.with_entities(
+        Attendance.employee_status, db.func.count(Attendance.attendance_id)
+    ).group_by(Attendance.employee_status).all()
+
+    # Convert the result to a list of dictionaries or tuples
+    attendance_data_list = [{'status': status, 'count': count} for status, count in attendance_data]
+
+    # Return the data in a JSON format
+    return jsonify(attendance_data_list)
+
+@ab.route('/chart')
+def attendance_chart():
+    return render_template('attendance_chart.html')
+
+@ab.route('/chart2')
+def attendance_chart2():
+    return render_template('attendance_chart2.html')

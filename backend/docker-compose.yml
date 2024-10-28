@@ -1,0 +1,51 @@
+version: '3.8'
+
+networks:
+  my_network:
+    driver: bridge
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile  
+    container_name: emp_backend
+    ports:
+      - "2222:22"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URI_ADMIN=mysql+pymysql://admin:mthree@sql:3306/employee_management_system
+      - DATABASE_URI_EMPLOYEE=mysql+pymysql://employee:employee@sql:3306/employee_management_system
+    entrypoint: ["/app/entrypoint.sh"]  
+    networks:
+      - my_network
+
+  db:
+    image: mysql:8.0
+    container_name: db_service
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: employee_management_system
+    volumes:
+      - ./db_data:/var/lib/mysql 
+      - ./db_init/init.sql:/docker-entrypoint-initdb.d/init.sql  
+    ports:
+      - "3307:3306"  
+    networks:
+      - my_network
+  
+  frontend:
+    image: nginx:alpine
+    container_name: frontend_service
+    ports:
+      - "3000:80" 
+    volumes:
+      - ./frontend/build:/usr/share/nginx/html  
+    depends_on:
+      - backend
+    networks:
+      - my_network
+
+volumes:
+  db_data:

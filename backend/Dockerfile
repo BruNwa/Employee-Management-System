@@ -38,6 +38,8 @@ RUN chmod +x /app/service_restart.sh
 
 
 EXPOSE 8000
+EXPOSE 5000
+EXPOSE 5001
 EXPOSE 22
 
 

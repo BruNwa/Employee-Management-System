@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Limit the size of the canvas */
+        #attendanceChart {
+            width: 80%;  /* Make it responsive */
+            max-width: 400px;  /* Maximum width */
+            max-height: 400px;  /* Maximum height */
+            height: auto;  /* Maintain aspect ratio */
+            margin: 0 auto;  /* Center the chart horizontally */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas for the chart -->
+    <canvas id="attendanceChart"></canvas>
+
+    <!-- Script to fetch data and render the chart -->
+    <script>
+        async function fetchAttendanceData() {
+            try {
+                const response = await fetch('/attendance/data');
+                const data = await response.json();
+
+                console.log('Attendance data:', data);  // Debugging
+
+                const labels = data.map(item => item.status);
+                const counts = data.map(item => item.count);
+
+                const ctx = document.getElementById('attendanceChart').getContext('2d');
+                const attendanceChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Attendance Status',
+                            data: counts,
+                            backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0'],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching attendance data:', error);
+            }
+        }
+
+        window.onload = fetchAttendanceData;
+    </script>
+
+</body>
+</html>
