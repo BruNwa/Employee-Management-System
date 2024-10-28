@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Leave</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <h1>Apply for Leave</h1>
+
+    <!-- Flash messages display -->
+    {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+            <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label for="leave_type">Leave Type:</label>
+        <select id="leave_type" name="leave_type" required onchange="updateLeaveBalance()">
+            <option value="">Select Leave Type</option>
+            {% for leave_type in leave_types %}
+                <option value="{{ leave_type.leave_type_id }}">{{ leave_type.leave_type_name }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Table for displaying available leave balances -->
+        <table id="leave_balance_table" style="width:100%; margin-top: 10px;">
+            <thead>
+                <tr>
+                    <th>Leave Type</th>
+                    <th>Available Balance (Days)</th>
+                </tr>
+            </thead>
+            <tbody id="leave_balance_body">
+                <!-- Dynamic content will be added here -->
+                {% for leave_type in leave_types %}
+                    <tr>
+                        <td>{{ leave_type.leave_type_name }}</td>
+                        <td>{{ leave_balances[leave_type.leave_type_id] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <label for="leave_start">Leave Start Date:</label>
+        <input type="date" id="leave_start" name="leave_start" required>
+
+        <label for="leave_end">Leave End Date:</label>
+        <input type="date" id="leave_end" name="leave_end" required onchange="calculateDays()">
+
+        <p id="total_days">Total Days Requested: 0</p>
+
+        <button type="submit">Apply for Leave</button>
+    </form>
+
+    <input type="hidden" id="leave_balances_data" value="{{ leave_balances | tojson }}">
+
+    <script>
+        // Retrieve JSON data from the hidden input
+        let leaveBalances;
+        const leaveBalancesData = document.getElementById('leave_balances_data').value;
+
+        console.log("Leave Balances Data:", leaveBalancesData); // Debugging statement
+
+        try {
+            leaveBalances = leaveBalancesData ? JSON.parse(leaveBalancesData) : {};
+        } catch (error) {
+            console.error("Error parsing leave balances data:", error);
+            leaveBalances = {}; // Default to an empty object on error
+        }
+
+        // Function to update the leave balance table based on selected leave type
+        function updateLeaveBalance() {
+            const leaveTypeId = document.getElementById('leave_type').value;
+            const balanceBody = document.getElementById('leave_balance_body');
+
+            if (leaveTypeId) {
+                const selectedBalance = leaveBalances[leaveTypeId] || 0;
+                // Optional: Update only the relevant row in case you want to highlight the selected type
+                // balanceBody.innerHTML = ''; // Uncomment if you want to clear other rows
+                // balanceBody.innerHTML += `<tr><td>${leaveTypeId}</td><td>${selectedBalance}</td></tr>`;
+            }
+        }
+
+        // Function to calculate total days requested based on selected start and end dates
+        function calculateDays() {
+            const leaveStart = new Date(document.getElementById('leave_start').value);
+            const leaveEnd = new Date(document.getElementById('leave_end').value);
+            const totalDaysDisplay = document.getElementById('total_days');
+
+            if (leaveStart && leaveEnd) {
+                const timeDiff = leaveEnd - leaveStart;
+                const totalDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include both start and end days
+                totalDaysDisplay.textContent = `Total Days Requested: ${totalDays > 0 ? totalDays : 0}`;
+            } else {
+                totalDaysDisplay.textContent = 'Total Days Requested: 0';
+            }
+        }
+    </script>
+
+</body>
+</html>
