@@ -393,6 +393,30 @@ INSERT INTO `leave` (employee_id, leave_type_id, leave_start, leave_end, leave_s
 (9, 4, '2023-10-28', '2023-10-30', 'pending', 1),
 (10, 1, '2024-09-28', '2024-10-03', 'approved', 1);
 
+INSERT INTO `payroll` (employee_id, base_salary, bonus, tax, deduction) VALUES
+	(1, 5000.00, 300.00, 700.00, 100.00), 
+	(2, 4500.00, 0.00, 600.00, 50.00), 
+	(3, 6000.00, 500.00, 800.00, 200.00), 
+	(4, 3200.00, 200.00, 400.00, 75.00),
+	(5, 5500.00, 100.00, 600.00, 0.00), 
+	(6, 7200.00, 0.00, 1000.00, 120.00), 
+	(7, 4800.00, 250.00, 580.00, 50.00), 
+	(8, 5100.00, 150.00, 700.00, 90.00), 
+	(9, 6300.00, 450.00, 820.00, 30.00), 
+	(10, 5300.00, 200.00, 620.00, 40.00);
+ 
+INSERT INTO `payment` (payroll_id, payment_method, payment_status, payment_date, amount_paid) VALUES
+	(1, 'bank transfer', 'paid', '2024-10-01', 4500.00),
+	(2, 'cash', 'pending', '2024-10-05', 3850.00), 
+	(3, 'check', 'paid', '2024-10-03', 5500.00),
+	(4, 'bank transfer', 'failed', '2024-10-06', 2725.00), 
+	(5, 'cash', 'paid', '2024-10-02', 5000.00),
+	(6, 'check', 'pending', '2024-10-07', 6080.00), 
+	(7, 'bank transfer', 'paid', '2024-10-08', 4420.00),
+	(8, 'cash', 'paid', '2024-10-09', 4360.00), 
+	(9, 'check', 'failed', '2024-10-10', 5150.00),
+	(10, 'bank transfer', 'paid', '2024-10-11', 4640.00);
+
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'VeryHardPaSSwordToFindhihi';
 FLUSH PRIVILEGES;
 
