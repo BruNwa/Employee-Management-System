@@ -12,7 +12,9 @@ CREATE TABLE IF NOT EXISTS `department` (
 
 CREATE TABLE IF NOT EXISTS `role` (
     role_id INT AUTO_INCREMENT PRIMARY KEY,
-    role_name VARCHAR(100) NOT NULL
+    role_name VARCHAR(100) NOT NULL,
+    base_salary DECIMAL(10,2) DEFAULT 0,
+    salary_type ENUM('monthly','hourly') NOT NULL DEFAULT 'monthly'
 );
 CREATE TABLE IF NOT EXISTS `employee` (
     employee_id INT AUTO_INCREMENT PRIMARY KEY,
