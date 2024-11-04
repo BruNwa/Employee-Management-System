@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance List</title>
+</head>
+<style>
+  /* General Reset */
+   /* General Reset */
+    /* General Reset */
+    * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            letter-spacing: -0.025em;
+        }
+
+        body {
+            background-color: #0f0f1d; /* Dark background for the entire page */
+            color: #ddd; /* Light text for better readability */
+            font-family: Arial, sans-serif; /* Clean, modern font */
+            padding: 20px; /* General padding for body */
+        }
+        
+        /* Form Styling */
+        form#attendanceForm {
+            margin-bottom: 20px;
+            background-color: #222831; /* Darker background to match sidebar */
+            padding: 10px; /* Reduced padding */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Soft shadow */
+            display: flex; /* Flexbox for better alignment */
+            gap: 10px; /* Space between elements */
+            max-width: 600px; /* Limit width for better appearance */
+            margin: 0 auto; /* Center the form */
+        }
+
+        form#attendanceForm input[type="text"],
+        form#attendanceForm input[type="date"] {
+            flex: 1; /* Inputs will take equal available space */
+            padding: 8px; /* Smaller padding */
+            border: 1px solid #444; /* Darker border for visibility */
+            border-radius: 4px; /* Rounded corners */
+            font-size: 14px; /* Smaller font size */
+            background-color: #333; /* Input background matching the theme */
+            color: #eee; /* Input text color */
+            transition: border-color 0.3s; /* Transition for border on focus */
+        }
+
+        form#attendanceForm input[type="text"]:focus,
+        form#attendanceForm input[type="date"]:focus {
+            border-color: #e94560; /* Highlight border on focus */
+            outline: none; /* Remove default outline */
+        }
+
+        form#attendanceForm button {
+            padding: 8px 15px; /* Smaller button padding */
+            background-color: #e94560; /* Vibrant button color */
+            color: #fff; /* Button text color */
+            border: none; /* No border */
+            border-radius: 4px; /* Rounded corners */
+            font-size: 14px; /* Smaller font size */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s, transform 0.3s; /* Transition for hover effect */
+        }
+
+        form#attendanceForm button:hover {
+            background-color: #d73d50; /* Darker shade for hover effect */
+            transform: translateY(-2px); /* Slight lift on hover */
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%; /* Full width */
+            max-width: 90%; /* Set maximum width */
+            margin: 20px auto; /* Center the table */
+            border-collapse: collapse; /* Remove double borders */
+            background-color: #222831; /* Table background color */
+            border-radius: 8px; /* Rounded corners */
+            overflow: hidden; /* Ensure corners are rounded */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3); /* Shadow effect */
+        }
+
+        th, td {
+            padding: 12px; /* Padding for table cells */
+            text-align: left; /* Left-align text */
+            border-bottom: 1px solid #444; /* Separator lines */
+            font-size: 14px; /* Smaller font size for table text */
+        }
+
+        th {
+            background-color: #1a1a2e; /* Darker header background */
+            color: #e94560; /* Header text color */
+            font-weight: bold; /* Bold header text */
+        }
+
+        tbody tr:hover {
+            background-color: #333; /* Highlight row on hover */
+        }
+
+        /* No Records Style */
+        .no-records {
+            text-align: center; /* Center text */
+            color: #ccc; /* Text color for no records */
+            font-style: italic; /* Italic style */
+            padding: 20px; /* Padding for no records message */
+        }
+
+</style>
+<body>
+    <h1>Attendance List</h1>
+    <form id="attendanceForm">
+        <input type="text" id="employee_id" name="employee_id" placeholder="Employee ID">
+        <input type="date" id="date" name="date">
+        <button type="button" onclick="filterAttendance()">Filter</button>
+    </form>
+    <table id="attendanceTable">
+        <thead>
+            <tr>
+                <th>Attendance ID</th>
+                <th>Employee ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Date</th>
+                <th>Time In</th>
+                <th>Time Out</th>
+                <th>Work Hours</th>
+                <th>Overtime Hours</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in attendance_records %}
+            <tr>
+                <td>{{ record.attendance_id }}</td>
+                <td>{{ record.employee_id }}</td>
+                <td>{{ record.employee.first_name }}</td>
+                <td>{{ record.employee.last_name }}</td>
+                <td>{{ record.date }}</td>
+                <td>{{ record.time_in }}</td>
+                <td>{{ record.time_out }}</td>
+                <td>{{ record.work_hours }}</td>
+                <td>{{ record.overtime_hours }}</td>
+                <td>{{ record.employee_status }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="10">No records found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>

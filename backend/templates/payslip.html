@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Payslip</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Employee Payslip</h1>
+    
+    <table>
+        <!-- Employee Information Section -->
+        <tr>
+            <th colspan="2">Employee Information</th>
+        </tr>
+        <tr>
+            <td>Employee Name:</td>
+            <td>{{ payslip_data.employee_name }}</td>
+        </tr>
+        <tr>
+            <td>Period:</td>
+            <td>
+                {% if payslip_data.period_type == "last_month" %}
+                    Last Month
+                {% elif payslip_data.period_type == "14_days" %}
+                    Last 14 Days
+                {% endif %}
+            </td>
+        </tr>
+        
+        <!-- Salary Breakdown Section -->
+        <tr>
+            <th colspan="2">Salary Breakdown</th>
+        </tr>
+        <tr>
+            <td>Base Salary:</td>
+            <td>${{ payslip_data.base_salary | round(2) }}</td>
+        </tr>
+        <tr>
+            <td>Overtime Pay:</td>
+            <td>${{ payslip_data.overtime_pay | round(2) }}</td>
+        </tr>
+        <tr>
+            <td>Non-Workday Bonus:</td>
+            <td>${{ payslip_data.non_workday_bonus | round(2) }}</td>
+        </tr>
+        <tr>
+            <td>Additional Bonus:</td>
+            <td>${{ payslip_data.additional_bonus | round(2) }}</td>
+        </tr>
+        
+        <!-- Deductions Section -->
+        <tr>
+            <th colspan="2">Deductions</th>
+        </tr>
+        <tr>
+            <td>Tax:</td>
+            <td>${{ payslip_data.tax | round(2) }}</td>
+        </tr>
+        <tr>
+            <td>Other Deductions:</td>
+            <td>${{ payslip_data.deductions | round(2) }}</td>
+        </tr>
+        
+        <!-- Net Salary Section -->
+        <tr>
+            <th colspan="2">Net Salary</th>
+        </tr>
+        <tr>
+            <td>Total Net Salary:</td>
+            <td>${{ payslip_data.net_salary | round(2) }}</td>
+        </tr>
+    </table>
+    
+    <footer>
+        © 2024 <strong>AWA</strong>. All Rights Reserved.
+    </footer>
+</body>
+</html>

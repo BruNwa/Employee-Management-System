@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #0f0f1d;
+        color: #ddd;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    /* Centering the header */
+    h1 {
+        font-size: 28px;
+        color: #e94560;
+        margin: 20px 0; /* Added margin for spacing */
+        text-align: center; /* Center align the title */
+        border-bottom: 2px solid #e94560; /* Underline effect for professionalism */
+        padding-bottom: 10px; /* Padding for space between text and underline */
+    }
+
+    /* Table Styles */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        border-radius: 8px; /* Smoother border radius */
+        overflow: hidden; /* Ensures border radius is visible */
+    }
+
+    thead {
+        background-color: #1a1a2e;
+    }
+
+    th {
+        padding: 15px;
+        text-align: left;
+        font-size: 16px;
+        color: #e94560;
+        border-bottom: 2px solid #e94560;
+    }
+
+    tbody {
+        background-color: #222831;
+    }
+
+    tr {
+        transition: background 0.3s;
+    }
+
+    tr:hover {
+        background-color: #16213e;
+    }
+
+    td {
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+        color: #ccc;
+    }
+
+    /* Button Styles */
+    button {
+        padding: 10px 15px;
+        background-color: #e94560;
+        color: white;
+        border: none;
+        border-radius: 20px; /* Smoother and more creative border radius */
+        cursor: pointer;
+        font-size: 16px;
+        margin-right: 5px; /* Spacing between buttons */
+        transition: background 0.3s; /* Smooth background transition */
+    }
+
+    button:hover {
+        background-color: #d6324b;
+    }
+
+    /* No records found styles */
+    td[colspan="6"] {
+        text-align: center;
+        color: #aaa;
+        font-style: italic;
+    }
+</style>
+<body>
+    <div class="container">
+        <h1>Payments List</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Payment ID</th>
+                    <th>Payroll ID</th>
+                    <th>Amount Paid</th>
+                    <th>Payment Method</th>
+                    <th>Payment Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                    <tr>
+                        <td>{{ payment.payment_id }}</td>
+                        <td>{{ payment.payroll_id }}</td>
+                        <td>${{ payment.amount_paid | default(0) | round(2) }}</td>
+                        <td>{{ payment.payment_method }}</td>
+                        <td>{{ payment.payment_date.strftime('%Y-%m-%d') if payment.payment_date else 'N/A' }}</td>
+                        <td>
+                            {% if payment.payment_method in ['cash', 'check'] and payment.payment_status == 'pending' %}
+                                <!-- Buttons to change status only if payment is pending and paid by cash or check -->
+                                <button onclick="updateStatus({{ payment.payment_id }}, 'paid')">Mark as Paid</button>
+                                <button onclick="updateStatus({{ payment.payment_id }}, 'failed')">Mark as Failed</button>
+                            {% elif payment.payment_method == 'bank transfer' and payment.payment_status == 'pending' %}
+                                <!-- Button to run payment test for bank transfer -->
+                                <button onclick="runPaymentTest({{ payment.payment_id }})">Run Payment</button>
+                            {% else %}
+                                {{ payment.payment_status }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align:center;">No records found</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+<!-- 
+    <script>
+        function updateStatus(paymentId, newStatus) {
+            fetch(`/payslip/payments/update_status/${paymentId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert(`Payment status updated to ${newStatus}`);
+                    location.reload();  // Reload to reflect changes
+                } else {
+                    alert('Error updating payment status: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    
+        function runPaymentTest(paymentId) {
+            fetch(`/payslip/payments/run_test/${paymentId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);  // Show the success message returned by the server
+                    location.reload();  // Reload to reflect changes
+                } else {
+                    alert('Error running payment test: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script> -->
+    
+    <!-- <script>
+    function updateStatus(paymentId, newStatus) {
+        fetch(`/payslip/payments/update_status/${paymentId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: newStatus })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Payment status updated to ${newStatus}`);
+                location.reload();  // Reload to reflect changes
+            } else {
+                alert('Error updating payment status: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    function runPaymentTest(paymentId) {
+        fetch(`/payslip/payments/run_test/${paymentId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);  // Show the success message returned by the server
+                location.reload();  // Reload to reflect changes
+            } else {
+                alert('Error running payment test: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    </script> -->
+
+</body>
+</html>

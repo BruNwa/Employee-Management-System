@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create KPI</title>
+    <style>
+      /* General Styling */
+      * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+      }
+      body {
+          background-color: #0f0f1d;
+          color: #ddd;
+          font-family: Arial, sans-serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+      }
+
+      .container {
+          width: 400px; /* Fixed width for better desktop view */
+          padding: 40px;
+          background-color: #1a1a2e;
+          border-radius: 8px;
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+          text-align: center;
+      }
+
+      h1 {
+          color: #e94560;
+          font-size: 1.8em;
+          margin-bottom: 20px;
+      }
+
+      /* Flash Messages */
+      .flashes {
+          list-style: none;
+          margin-bottom: 20px;
+      }
+
+      .flashes li {
+          padding: 10px;
+          margin-bottom: 10px;
+          border-radius: 5px;
+      }
+
+      .flashes .success {
+          background-color: #28a745;
+          color: #fff;
+      }
+
+      .flashes .error {
+          background-color: #dc3545;
+          color: #fff;
+      }
+
+      /* Form Styling */
+      form {
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+      }
+
+      label {
+          text-align: left;
+          font-weight: bold;
+          font-size: 0.9em;
+          color: #ddd;
+          margin-bottom: 5px;
+      }
+
+      input[type="text"],
+      select {
+          padding: 10px;
+          font-size: 1em;
+          border: 1px solid #444;
+          border-radius: 5px;
+          background-color: #222;
+          color: #ddd;
+          outline: none;
+          transition: border-color 0.3s ease;
+      }
+
+      input[type="text"]:focus,
+      select:focus {
+          border-color: #e94560;
+      }
+
+      /* Submit Button Styling */
+      button {
+          background-color: #e94560;
+          color: white;
+          padding: 12px;
+          font-size: 1em;
+          font-weight: bold;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+
+      button:hover {
+          background-color: #d73d50;
+          transform: translateY(-3px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Back Link Styling */
+      a {
+          display: inline-block;
+          margin-top: 20px;
+          color: #e94560;
+          text-decoration: none;
+          font-size: 0.9em;
+          font-weight: bold;
+          transition: color 0.3s ease;
+      }
+
+      a:hover {
+          color: #d73d50;
+      }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Create Goal for Performance {{ performance_id }}</h1>
+
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    
+    <form method="POST" action="{{ url_for('performance.create_goal') }}">
+        <input type="hidden" name="performance_id" value="{{ performance_id }}">
+        
+        <label for="goal_description">Goal Description:</label>
+        <input type="text" name="goal_description" required>
+        
+        <label for="goal_status">Goal Status:</label>
+        <select name="goal_status" required>
+            <option value="">Select Status</option>
+            <option value="not started">Not Started</option>
+            <option value="in progress">In Progress</option>
+            <option value="achieved">Achieved</option>
+        </select>
+        
+        <button type="submit">Create Goal</button>
+    </form>
+
+    <a href="{{ url_for('performance.view_performance', performance_id=performance_id) }}">
+        <button>Go Back</button>
+    </a>
+  </div>
+</body>
+</html>

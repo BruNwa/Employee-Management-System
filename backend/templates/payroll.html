@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payroll Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            color: #30c92b;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .payroll-container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .payroll-controls {
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #30c92b;
+            padding: 10px;
+        }
+        th {
+            background-color: #30c92b;
+            color: #fff;
+        }
+        td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Payroll Management</h1>
+    <div class="payroll-container">
+        <div class="payroll-controls">
+            <label for="periodType">Select Payroll Period:</label>
+            <select id="periodType">
+                <option value="monthly">Monthly</option>
+                <option value="bi-weekly">Bi-Weekly</option>
+            </select>
+            <button onclick="processPayroll()">Process Payroll</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Employee Name</th>
+                    <th>Total Work Hours</th>
+                    <th>Overtime Hours</th>
+                    <th>Leave Deductions</th>
+                    <th>Overtime Pay</th>
+                    <th>Total Pay</th>
+                </tr>
+            </thead>
+            <tbody id="payrollData">
+                <tr><td colspan="7">No payroll data available</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+       async function processPayroll() {
+    const periodType = document.getElementById('periodType').value;
+    try {
+        const response = await fetch('/payroll/process-payroll', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ period_type: periodType })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch payroll data');
+        }
+
+        const data = await response.json();
+        displayPayrollData(data.payroll);
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error fetching payroll data');
+    }
+}
+function displayPayrollData(payroll) {
+    const payrollDataContainer = document.getElementById('payrollData');
+    payrollDataContainer.innerHTML = ''; // Clear existing data
+    
+    if (!payroll || payroll.length === 0) {
+        payrollDataContainer.innerHTML = '<tr><td colspan="7">No payroll data available</td></tr>';
+        return;
+    }
+
+    payroll.forEach(entry => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${entry.employee_id}</td>
+            <td>${entry.employee_name}</td>
+            <td>${entry.total_work_hours}</td>
+            <td>${entry.overtime_hours}</td>
+            <td>${entry.leave_deductions}</td>
+            <td>${entry.overtime_pay}</td>
+            <td>${entry.total_pay}</td>
+        `;
+        payrollDataContainer.appendChild(row);
+    });
+}
+    </script>
+</body>
+</html>

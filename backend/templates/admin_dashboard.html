@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- <style>
+     /* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    color: #ddd;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 250px;
+    background-color: #1a1a2e;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar h2 {
+    color: #e94560;
+    margin-bottom: 30px;
+    font-size: 22px;
+    text-align: center;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 15px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.sidebar ul li:hover {
+    background-color: #16213e;
+    color: #e94560;
+}
+
+/* Content Area Styling */
+.content {
+    flex: 1;
+    background-color: #0f0f1d;
+    padding: 30px;
+    overflow-y: auto;
+}
+
+#content-area h1 {
+    font-size: 24px;
+    color: #e94560;
+}
+
+#content-area p {
+    font-size: 18px;
+    color: #ccc;
+}
+
+/* Styling for Loaded Content */
+.loaded-content {
+    padding: 20px;
+    background-color: #222831;
+    border-radius: 8px;
+    color: #eee;
+}
+   
+    </style> -->
+
+    <style>
+        /* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    color: #ddd;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 250px;
+    background-color: #1a1a2e;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+}
+
+.sidebar h2 {
+    color: #e94560;
+    margin-bottom: 30px;
+    font-size: 22px;
+    text-align: center;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 15px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 4px;
+}
+
+.sidebar ul li:hover {
+    background-color: #e94560;
+    color: #ffffff;
+}
+
+/* Content Area Styling */
+.content {
+    flex: 1;
+    background-color: #0f0f1d;
+    padding: 30px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #555 #0f0f1d;
+}
+
+.content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.content::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 4px;
+}
+
+/* Header Styling */
+#content-area h1 {
+    font-size: 26px;
+    color: #e94560;
+    margin-bottom: 10px;
+}
+
+#content-area p {
+    font-size: 18px;
+    color: #ccc;
+}
+
+/* Styling for Loaded Content */
+.loaded-content {
+    padding: 25px;
+    background-color: #222831;
+    border-radius: 8px;
+    color: #eee;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    transition: box-shadow 0.3s ease;
+}
+
+.loaded-content:hover {
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.4);
+}
+.profile-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+                }
+
+.profile-pic {
+            font-size: 30px; /* Size of the emoji */
+            margin-right: 10px; /* Space between emoji and text */
+            }
+
+ /* Logout Button */
+ .logout-button {
+            margin-top: auto; /* Push the button to the bottom */
+            padding: 10px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #e94560; /* Color for the button */
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logout-button:hover {
+            background-color: #ff4d4d; /* Darker shade on hover */
+        }
+     /* Additional Calendar Styles */
+     .calendar-container {
+            padding: 25px;
+            background-color: #222831;
+            border-radius: 8px;
+            color: #eee;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            transition: box-shadow 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .calendar-container h2 {
+            color: #e94560;
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .calendar-container input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #1a1a2e;
+            border: none;
+            border-radius: 4px;
+            color: #ddd;
+            font-size: 16px;
+        }
+        #attendanceChart {
+            width: 80%;  /* Make it responsive */
+            max-width: 800px;  /* Maximum width */
+            max-height: 800px;  /* Maximum height */
+            height: auto;  /* Maintain aspect ratio */
+            margin: 20px auto;  /* Center the chart horizontally */
+        }
+/* Responsive Sidebar for Smaller Screens */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .sidebar ul li {
+        font-size: 14px;
+        padding: 12px;
+    }
+
+    .content {
+        padding: 20px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <h2>Management Dashboard</h2>
+            <div class="profile-section">
+                <div class="profile-pic">🫡</div> <!-- Salute emoji as profile picture -->
+                <div id="user-welcome">Welcome, <span id="username">User</span>!</div> <!-- Placeholder for username -->
+            </div>
+            <ul>
+                <li onclick="loadContent('/crud/employee/new')">Creation</li>
+                <li onclick="loadContent('/crud/employees')">Manage Employee</li>
+                <li onclick="loadContent('/attendance')">Attendance</li>
+                <li onclick="loadContent('/leaves/list')">Leaves</li>
+                <li onclick="loadContent('/performance')">Performance</li>
+                <li onclick="loadContent('/payslip/generate')">Generate Payslip</li>
+                <li onclick="loadContent('/salary-setup')">Salaries</li>
+                <li onclick="loadContent('/payslip/list')">Payslips</li>
+                <li onclick="loadContent('/payslip/payments/list')">Payments</li> 
+            </ul>
+            <button class="logout-button" onclick="logout()">
+                😢 Logout
+            </button>
+        </nav>
+
+        <!-- Content Area -->
+        <div class="content">
+            <div id="content-area">
+                <!-- Default content or welcome message -->
+                <h1>Welcome to the Management Dashboard</h1>
+                <p>Select an option from the left to get started.</p>
+
+               <!-- <div class="calendar-container">-->
+                <!--    <h2>Calendar</h2>-->
+                <!--    <input type="date" id="datepicker">-->
+               <!-- </div>-->
+                <canvas id="attendanceChart" width="400" height="200"></canvas> <!-- New line added for the chart -->
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script> 
+    async function fetchAttendanceData() {
+    try {
+        const response = await fetch('/attendance/data');  // Adjust the URL if needed
+        const data = await response.json();
+
+        const labels = data.map(item => item.status);
+        const counts = data.map(item => item.count);
+
+        const ctx = document.getElementById('attendanceChart').getContext('2d');
+        const attendanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Attendance Status',
+                    data: counts,
+                    backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0'],
+                }]
+            },
+            options: {
+                responsive: true,
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching attendance data:', error);
+    }
+}
+    window.onload = fetchAttendanceData;</script>
+</body>
+</html>

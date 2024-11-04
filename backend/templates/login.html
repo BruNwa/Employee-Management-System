@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Avengers Login</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        .page-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .rain-container {
+            position: relative;
+            width: 50%;
+            height: 100%;
+            background: #1a1a1a;
+            overflow: hidden;
+        }
+
+        .logo-rain {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+        }
+       
+        .form-group {
+            width: 130%; 
+            margin-bottom: 2rem;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%); 
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #28a745;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+        }
+        
+        button {
+            width: 130%; 
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%); 
+        }
+        
+        button:hover {
+            background: #218838;
+        }
+        
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        .form-footer {
+            text-align: center;
+            color: #666;
+            margin-top: 2rem;  
+            width: 130%;  
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%); 
+            padding: 1rem;  
+        }
+
+        #message {
+            margin-top: 1rem;
+            text-align: center;
+            padding: 10px;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .login-container {
+            width: 50%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column; 
+            justify-content: center;
+            align-items: center; 
+            font-family: Arial, sans-serif; 
+            background-color: #ffffff; 
+            padding: 20px; 
+            border: 2px solid #30c92b; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+            position: relative; 
+            overflow: hidden; 
+        }
+        .login-container img {
+            width: 200px; 
+            height: auto; 
+            margin-bottom: 8px; 
+        }
+        h2 {
+            font-size: 24px; 
+            color: #333; 
+            margin: 0; 
+            margin-bottom: 30px
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="rain-container" id="rainContainer"></div>
+        <div class="login-container">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Company Logo"> 
+            <h2>Algorithm Avengers Login<br></h2>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="email" placeholder="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" placeholder="phone" id="phone" required>
+                </div>
+                <button type="submit">Sign In</button>
+                <div class="form-footer">
+                    © 2024 <strong>AWA</strong>. All Rights Reserved.
+                </div>
+            </form>
+            <div id="message"></div>
+        </div>
+    </div>
+
+    <script>
+        
+        function createRainingLogo() {
+            const logo = document.createElement('img');
+            logo.src = '/static/mthree.png'; 
+            logo.className = 'logo-rain';
+            logo.style.left = Math.random() * 100 + '%';
+            logo.style.top = '-50px';
+            logo.style.width = '180px';
+            logo.style.height = '37px';
+            
+            const duration = 2 + Math.random() * 2;
+            logo.style.animation = `fall ${duration}s linear`;
+            
+            const container = document.getElementById('rainContainer');
+            container.appendChild(logo);
+
+            logo.addEventListener('animationend', () => {
+                logo.remove();
+            });
+        }
+
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = `
+            @keyframes fall {
+                0% {
+                    transform: translateY(-50px) rotate(0deg);
+                }
+                100% {
+                    transform: translateY(100vh) rotate(360deg);
+                }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+
+        setInterval(createRainingLogo, 300);
+
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageDiv = document.getElementById('message');
+            const submitButton = e.target.querySelector('button');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Signing in...';
+            
+            try {
+                const response = await axios.post('/login/login', {
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value
+                });
+                
+                // Store employee_id in sessionStorage
+                sessionStorage.setItem("employee_id", response.data.employee_id);
+                messageDiv.className = 'success-message';
+                messageDiv.textContent = `Welcome, ${response.data.name}! You have ${response.data.permission} permissions.`;
+                
+                // Redirect based on permission
+                setTimeout(() => {
+                    const redirectPath = response.data.permission === 'admin' 
+                        ? '/admin/dashboard'
+                        : '/employee/dashboard';
+                    window.location.href = redirectPath;
+                }, 1500);
+                
+            } catch (error) {
+                messageDiv.className = 'error-message';
+                messageDiv.textContent = error.response?.data?.error || 'Login failed. Please try again.';
+                submitButton.disabled = false;
+                submitButton.textContent = 'Sign In';
+            }
+        });
+    </script>
+</body>
+</html>

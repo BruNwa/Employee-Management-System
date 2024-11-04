@@ -1,0 +1,19 @@
+<tbody id="attendanceTableBody">
+    {% for record in attendance_records %}
+    <tr>
+        <td>{{ record.attendance_id }}</td>
+        <td>{{ record.employee_id }}</td>
+        <td>{{ record.employee.first_name }}</td>
+        <td>{{ record.employee.last_name }}</td>
+        <td>{{ record.date }}</td>
+        <td>{{ record.time_in }}</td>
+        <td>{{ record.time_out }}</td>
+        <td>{{ record.work_hours }}</td>
+        <td>{{ record.overtime_hours }}</td>
+        <td>{{ record.employee_status }}</td>
+    </tr>
+    {% endfor %}
+    {% if not attendance_records %}
+    <tr><td colspan="10">No attendance records found.</td></tr>
+    {% endif %}
+</tbody>

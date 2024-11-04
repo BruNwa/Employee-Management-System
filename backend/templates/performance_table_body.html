@@ -1,0 +1,22 @@
+{% for record in performance_records %}
+<tr>
+    <td>{{ record.performance_id }}</td>
+    <td>{{ record.employee_id }}</td>
+    <td>{{ record.reviewer_id }}</td>
+    <td>{{ record.review_score }}</td>
+    <td>{{ record.review_date }}</td>
+    <td>
+        <a href="{{ url_for('performance.view_performance', performance_id=record.performance_id) }}">View</a>
+        <a href="{{ url_for('performance.edit_performance', performance_id=record.performance_id) }}">Edit</a>
+        <form action="{{ url_for('performance.delete_performance', performance_id=record.performance_id) }}" method="POST" style="display:inline;">
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this record?');">Delete</button>
+        </form>
+    </td>
+</tr>
+{% endfor %}
+
+{% if not performance_records %}
+    <tr>
+        <td colspan="6">No performance records found.</td>
+    </tr>
+{% endif %}

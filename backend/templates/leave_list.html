@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Applications</title>
+    <style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #0f0f1d; /* Dark background */
+    color: #ddd; /* Light text color */
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-size: 28px;
+    color: #e94560; /* Accent color for the header */
+    text-align: center; /* Centering the header */
+    margin: 20px 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse; /* Remove double borders */
+    margin-top: 20px;
+}
+
+thead {
+    background-color: #1a1a2e; /* Darker header background */
+}
+
+th {
+    padding: 15px;
+    text-align: left; /* Align text to the left */
+    font-size: 16px; /* Font size for table headers */
+    color: #e94560; /* Accent color for headers */
+    border-bottom: 2px solid #e94560; /* Bottom border for headers */
+}
+
+tbody {
+    background-color: #222831; /* Table body background */
+}
+
+tr {
+    transition: background 0.3s; /* Smooth transition for row hover */
+}
+
+tr:hover {
+    background-color: #16213e; /* Darker color on hover */
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #ddd; /* Light border for cells */
+    color: #ccc; /* Text color for table data */
+}
+
+/* Button styles for approve/reject actions */
+button {
+    padding: 10px 15px;
+    background-color: #e94560; /* Button background color */
+    color: white; /* Button text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size for buttons */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+button:hover {
+    background-color: #d6324b; /* Darker shade on hover */
+}
+
+    </style>
+   
+</head>
+<body>
+
+    <h1>Leave Applications</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Employee ID</th>
+                <th>Employee Name</th>
+                <th>Leave Type</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for leave in leaves %}
+            <tr>
+                <td>{{ leave.employee_id }}</td>
+                <td>{{ leave.employee.first_name }} {{ leave.employee.last_name }}</td>
+                <td>{{ leave.leave_type.leave_type_name }}</td>
+                <td>{{ leave.leave_start.strftime('%Y-%m-%d') }}</td>
+                <td>{{ leave.leave_end.strftime('%Y-%m-%d') }}</td>
+                <td>{{ leave.leave_status }}</td>
+                <td>
+                    {% if leave.leave_status == 'pending' %}
+                        <button onclick="handleLeaveAction('{{ url_for('leaves.approve_leave', leave_id=leave.leave_id) }}', 'approve')">Approve</button>
+                        <button onclick="handleLeaveAction('{{ url_for('leaves.deny_leave', leave_id=leave.leave_id) }}', 'reject')">Reject</button>
+                        <!-- <form action="{{ url_for('leaves.approve_leave', leave_id=leave.leave_id) }}" method="post" style="display:inline;">
+                            <button type="submit">Approve</button>
+                        </form>
+                        <form action="{{ url_for('leaves.deny_leave', leave_id=leave.leave_id) }}" method="post" style="display:inline;">
+                            <button type="submit">Reject</button> -->
+                        </form>
+                    {% else %}
+                        <span>No actions available</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role Salary Setup</title>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> -->
+</head>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #0f0f1d;
+    color: #ddd;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* Header Styles */
+h1 {
+    font-size: 28px;
+    color: #e94560;
+    margin-bottom: 20px;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+thead {
+    background-color: #1a1a2e;
+}
+
+th {
+    padding: 15px;
+    text-align: left;
+    font-size: 16px;
+    color: #e94560;
+    border-bottom: 2px solid #e94560;
+}
+
+tbody {
+    background-color: #222831;
+}
+
+tr {
+    transition: background 0.3s;
+}
+
+tr:hover {
+    background-color: #16213e;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    color: #ccc;
+}
+
+/* Input and Button Styles */
+input[type="number"],
+select {
+    width: calc(100% - 20px); /* Full width with some padding */
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #e94560;
+    border-radius: 5px;
+    background-color: #333;
+    color: #eee;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #e94560;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #d6324b;
+}
+</style>
+<body>
+    <div class="container">
+        <h1>Role Salary Setup</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Role Name</th>
+                    <th>Base Salary</th>
+                    <th>Salary Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for role in roles %}
+                <tr>
+                    <td>{{ role.role_name }}</td>
+                    <td>
+                        <input type="hidden" name="role_id" value="{{ role.role_id }}">
+                        <input type="number" name="base_salary" value="{{ role.base_salary }}" required step="0.01">
+                    </td>
+                    <td>
+                        <select name="salary_type" required>
+                            <option value="monthly" {% if role.salary_type == 'monthly' %}selected{% endif %}>Monthly</option>
+                            <option value="hourly" {% if role.salary_type == 'hourly' %}selected{% endif %}>Hourly</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button type="button" onclick="submitForm(this)">Update</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

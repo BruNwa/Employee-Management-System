@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Details</title>
+</head>
+<style>
+       * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #0f0f1d;
+            color: #ddd;
+            font-family: 'Arial', sans-serif;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1200px; /* Increased max-width for desktop */
+            margin: auto;
+            padding: 50px;
+            border-radius: 12px;
+            background-color: #1a1a2e;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Header Styling */
+        h1, h2 {
+            color: #e94560;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 2em; /* Larger font sizes for desktop */
+        }
+        h2 {
+            margin-top: 40px;
+            font-size: 1.8em;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 1em; /* Larger table font size */
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #444;
+            background-color: #222;
+            color: #ddd;
+        }
+        th {
+            background-color: #2d4059;
+            color: #e94560;
+            font-weight: bold;
+        }
+
+        /* Button Styling */
+        .button-group {
+            display: inline-block;
+            margin-top: 25px;
+        }
+
+        button, .action-link {
+            background-color: #e94560;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-right: 10px; /* Adds spacing between buttons */
+        }
+
+        button:hover, .action-link:hover {
+            background-color: #d73d50;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Action buttons inside table */
+        .table-button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        /* No Records Message */
+        .no-records {
+            text-align: center;
+            color: #bbb;
+            font-style: italic;
+            padding: 15px;
+            margin-top: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        /* Flash Animations */
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+</style>
+<body>
+    <div class="container">
+    <h1>Performance Details for Employee {{ performance.employee_id }}</h1>
+
+    <h2>Review Information</h2>
+    <p><strong>Performance ID:</strong> {{ performance.performance_id }}</p>
+    <p><strong>Review Score:</strong> {{ performance.review_score }}</p>
+    <p><strong>Reviewer ID:</strong> {{ performance.reviewer_id }}</p>
+    <p><strong>Review Date:</strong> {{ performance.review_date }}</p>
+
+    <h2>KPIs</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>KPI ID</th>
+                <th>Description</th>
+                <th>Score</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for kpi in kpis %}
+            <tr>
+                <td>{{ kpi.kpi_id }}</td>
+                <td>{{ kpi.kpi_description }}</td>
+                <td>{{ kpi.kpi_score }}</td>
+                <td>
+                    <div class="table-button-group">
+                    <a href="{{ url_for('performance.edit_kpi', kpi_id=kpi.kpi_id) }}">Edit</a>
+                    <form action="{{ url_for('performance.delete_kpi', kpi_id=kpi.kpi_id) }}" method="POST" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Are you sure you want to delete this record?');">Delete</button>
+                    </form>
+                </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if not kpis %}
+        <p class="no-records">No KPIs found for this performance review.</p>
+    {% endif %}
+    <div class="button-group">
+    <a href="{{ url_for('performance.create_kpi', performance_id=performance.performance_id) }}">
+        <button>Add KPI</button>
+    </a>
+    </div>
+
+    <h2>Goals</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Goal ID</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for goal in goals %}
+            <tr>
+                <td>{{ goal.goal_id }}</td>
+                <td>{{ goal.goal_description }}</td>
+                <td>{{ goal.goal_status }}</td>
+                <td>
+                    <div class="table-button-group">
+                    <a href="{{ url_for('performance.edit_goal', goal_id=goal.goal_id) }}">Edit</a>
+                    <form action="{{ url_for('performance.delete_goal', goal_id=goal.goal_id) }}" method="POST" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Are you sure you want to delete this record?');">Delete</button>
+                    </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if not goals %}
+        <p class="no-records">No goals found for this performance review.</p>
+    {% endif %}
+    <div class="button-group">
+    <a href="{{ url_for('performance.create_goal', performance_id=performance.performance_id) }}">
+        <button>Add goal</button>
+    </a>
+    </div>
+    <h2>Achievements</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Achievement ID</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for achievement in achievements %}
+            <tr>
+                <td>{{ achievement.achievement_id }}</td>
+                <td>{{ achievement.achievement_description }}</td>
+                <td>{{ achievement.achievement_date }}</td>
+                <td>
+                    <div class="table-button-group">
+                    <a href="{{ url_for('performance.edit_achievement', achievement_id=achievement.achievement_id) }}">Edit</a>
+                    <form action="{{ url_for('performance.delete_achievement', achievement_id=achievement.achievement_id) }}" method="POST" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Are you sure you want to delete this record?');">Delete</button>
+                    </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if not achievements %}
+        <p class="no-records">No achievements found for this performance review.</p>
+    {% endif %}
+    <div class="button-group">
+    <a href="{{ url_for('performance.create_achievement', performance_id=performance.performance_id) }}">
+        <button>Add achievement</button>
+    </a>
+    </div>
+    <div class="button-group">
+    <a href="{{ url_for('performance.list_performance') }}">
+        <button>Go Back</button>
+    </a>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('h1, h2').forEach((element, index) => {
+            element.style.animationDelay = `${index * 0.6}s`;
+        });
+    });
+</script>
+</body>
+</html>

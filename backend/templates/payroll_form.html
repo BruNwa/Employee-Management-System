@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process Payroll</title>
+</head>
+<body>
+    <h1>Process Payroll</h1>
+    <form action="{{ url_for('payroll.process_payroll') }}" method="POST">
+        <label for="period_type">Payroll Period:</label>
+        <select name="period_type" id="period_type" required>
+            <option value="monthly">Monthly</option>
+            <option value="bi-weekly">Bi-Weekly</option>
+        </select>
+        <button type="submit">Process Payroll</button>
+    </form>
+</body>
+</html>

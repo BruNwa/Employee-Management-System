@@ -17,7 +17,9 @@ class Role(db.Model):
     
     role_id = db.Column(db.Integer, primary_key=True)
     role_name = db.Column(db.String(100), nullable=False)
-    
+    base_salary = db.Column(db.Numeric(10, 2), nullable=True)  # Base salary for the role
+    salary_type = db.Column(db.Enum('monthly', 'hourly'), nullable=True)  # Defines if the role is monthly or hourly    
+
     # Relationships
     employees = db.relationship('Employee', backref='role', lazy=True)
 

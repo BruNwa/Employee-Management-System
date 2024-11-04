@@ -1,57 +1,51 @@
-from flask import request, jsonify, Blueprint
-from models import db, Attendance
-from datetime import datetime
+from flask import request, jsonify, Blueprint, render_template  
+from models import db, Attendance, Employee
+from datetime import datetime, date
 
 ab = Blueprint('attendance', __name__)
 
+
 @ab.route('/', methods=['GET'])
 def view_attendance():
-    # Get query parameters
+    # Get query parameters from the form submission
     employee_id = request.args.get('employee_id', type=int)
     date_str = request.args.get('date', type=str)
 
+    attendance_records=[]
+    
     # Initialize a query
-    query = Attendance.query
+    query = db.session.query(Attendance).join(Employee)
 
-    # Filter by employee_id if provided
+     # Apply filters if they are provided
     if employee_id:
-        query = query.filter_by(employee_id=employee_id)
-
-    # Filter by date if provided
+        query = query.filter(Attendance.employee_id == employee_id)
     if date_str:
         try:
-            # Parse the date string to a date object
             date_obj = datetime.strptime(date_str, '%Y-%m-%d').date()
-            query = query.filter_by(date=date_obj)
+            query = query.filter(Attendance.date == date_obj)
         except ValueError:
+            # Return an error if the date format is invalid
             return jsonify({"error": "Invalid date format. Use YYYY-MM-DD."}), 400
-
-    # Get all filtered attendance records
+    query=query.order_by(Attendance.time_out.desc()).limit(15)
     attendance_records = query.all()
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # Render only the table rows (tbody) for AJAX responses
+            return render_template('attendance_table_body.html', attendance_records=attendance_records, include_header=False)
 
-    # Prepare the response
-    attendance_list = [
-        {
-            "attendance_id": record.attendance_id,
-            "employee_id": record.employee_id,
-            "date": record.date.isoformat(),  # Convert date to string
-            "time_in": record.time_in.strftime("%H:%M:%S") if record.time_in else None,  # Convert time_in to string
-            "time_out": record.time_out.strftime("%H:%M:%S") if record.time_out else None,  # Convert time_out to string
-            "work_hours": record.work_hours,
-            "overtime_hours": record.overtime_hours,
-            "employee_status": record.employee_status,
-        }
-        for record in attendance_records
-    ]
+    return render_template('attendance_list.html', attendance_records=attendance_records, include_header=True)
 
-    db.session.commit()
 
-    return jsonify(attendance_list), 200
 
 # Check-in function
 @ab.route('/check_in/<int:employee_id>', methods=['POST'])
 def check_in(employee_id):
    
+        # Check if the employee exists
+    employee = Employee.query.get(employee_id)
+    if not employee:
+        return jsonify({"error": "Employee does not exist!"}), 404
+
+
     today = datetime.now().date()
 
     # Check if the employee already checked in today
@@ -82,11 +76,21 @@ def check_in(employee_id):
 
     return jsonify({"message": "Check-in successful!"}), 200
 
+@ab.route('/checking')
+def attendance_page():
+    return render_template('attendance_buttons.html')
+
 
 # Check-out function
 @ab.route('/check_out/<int:employee_id>', methods=['POST'])
 def check_out(employee_id):
     
+    # Check if the employee exists
+    employee = Employee.query.get(employee_id)
+    if not employee:
+        return jsonify({"error": "Employee does not exist!"}), 404
+
+
     today = datetime.now().date()
 
     # Find the employee's attendance record for today
@@ -111,3 +115,28 @@ def check_out(employee_id):
 
     return jsonify({"message": "Check-out successful!"}), 200
 
+
+
+@ab.route('/data', methods=['GET'])
+def get_attendance_data():
+    # Get today's date
+    today = date.today()
+
+    # Query to count attendance by status, filtering by today's date
+    attendance_data = Attendance.query.with_entities(
+        Attendance.employee_status, db.func.count(Attendance.attendance_id)
+    ).filter(Attendance.date == today).group_by(Attendance.employee_status).all()
+
+    # Convert the result to a list of dictionaries
+    attendance_data_list = [{'status': status, 'count': count} for status, count in attendance_data]
+
+    # Return the data in JSON format
+    return jsonify(attendance_data_list)
+
+@ab.route('/chart')
+def attendance_chart():
+    return render_template('attendance_chart.html')
+
+@ab.route('/chart2')
+def attendance_chart2():
+    return render_template('attendance_chart2.html')

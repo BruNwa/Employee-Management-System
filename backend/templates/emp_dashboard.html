@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/emp_dashboard.css') }}">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Company Logo"> 
+            Employee Portal
+        </div>
+        <button class="nav-button active" data-tab="attendance">Attendance</button>
+        <button class="nav-button" data-tab="profile">Profile</button>
+        <button class="nav-button" data-tab="leaves">Leave Requests</button>
+        <button class="nav-button" data-tab="performance">Performance</button>
+		<button class="nav-button" data-tab="payslips">Payslips</button>
+    </div>
+    <div class="logout-container">
+        <button class="logout-btn" onclick="logout()">
+            <img src="{{ url_for('static', filename='logout.png') }}" alt="Logout" class="logout-icon">
+            <span class="logout-text">Logout</span>
+        </button>
+    </div>
+</div>
+</div>
+    <div class="main-content">
+        <div id="attendance" class="tab-content active">
+            <div class="card">
+                <h2>Attendance Tracking</h2>
+                <div class="time-display" id="currentTime">00:00:00</div>
+                <div class="attendance-controls">
+                    <button id="checkinBtn" class="btn btn-checkin">Check In</button>
+                    <button id="checkoutBtn" class="btn btn-checkout" disabled>Check Out</button>
+                </div>
+                <h3>Attendance Logs</h3>
+                <table id="attendanceLogTable" class="payslips-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time In</th>
+                            <th>Time Out</th>
+                            <th>Work Hours</th>
+                            <th>Overtime Hours</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceLogTableBody">
+                        <!-- Attendance log entries will be inserted here -->
+                    </tbody>
+                </table>
+                <div class="work-stats">
+                    <div class="stat-card">
+                        <h3>Time In</h3>
+                        <div class="value" id="timeIn">--:--</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Time Out</h3>
+                        <div class="value" id="timeOut">--:--</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Work Hours</h3>
+                        <div class="value" id="workHours">0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Status</h3>
+                        <div class="value" id="status">Not Checked In</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="profile" class="tab-content">
+            <div class="card">
+                <h2>Profile Information</h2>
+                <div id="profileDetails"></div>
+            </div>
+            <div class="card">
+                <h2>Update Profile</h2>
+                <form id="updateProfileForm">
+                    <div class="profile-field">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="profile-field">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+                    <button type="submit" class="btn btn-checkin">Update Profile</button>
+                </form>
+            </div>
+        </div>
+        <div id="leaves" class="tab-content">
+            <div class="card">
+                <h2>Leave Requests</h2>
+                
+                <!-- Display Leave Balances -->
+                <div id="leaveBalances">
+                    <h3>Leave Balances</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Leave Type</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaveBalancesTableBody">
+                            <!-- Leave balances will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+        
+                <!-- Submit New Leave Request Form -->
+                <div class="leave-request-form profile-field">
+                    <h3 style="margin-bottom: 1.5rem;">Submit New Leave Request</h3>
+                    <form id="leaveRequestForm">
+                        <div class="form-group">
+                            <label for="leaveType">Leave Type</label>
+                            <select id="leaveType" name="leave_type_id" class="form-control" required>
+                                <option value="">Select Leave Type</option>
+                                <!-- Leave types will be populated dynamically -->
+                            </select>
+                        </div>
+        
+                        <div class="form-group">
+                            <label for="startDate">Start Date</label>
+                            <input type="date" id="startDate" name="start_date" class="form-control" required>
+                        </div>
+        
+                        <div class="form-group">
+                            <label for="endDate">End Date</label>
+                            <input type="date" id="endDate" name="end_date" class="form-control" required>
+                        </div>
+        
+                        <button type="submit" class="btn btn-checkin" style="margin-top: 1rem;">
+                            Submit Request
+                        </button>
+                    </form>
+                </div>
+        
+                <!-- Display Leave Request History -->
+                <div class="leave-requests-table" style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1.5rem;">Leave Request History</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Balance</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th>Approver</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaveRequestsTableBody">
+                            <!-- Leave requests will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+          
+        <div id="performance" class="tab-content">
+            <div class="card">
+                <h2>Performance Reviews</h2>
+                <div id="reviewsContainer"></div>
+            </div>
+        </div>
+    </div>
+    <div id="payslips" class="tab-content">
+        <div class="payslips-container">
+            <!-- Current Payslip Card -->
+            <div class="card">
+                <h2>Current Payslip</h2>
+                <div id="currentPayslip">
+                </div>
+            </div>
+    
+            <!-- Payslip History Card -->
+            <div class="card">
+                <h2>Payslip History</h2>
+                
+                <div class="date-filters">
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" id="startDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date</label>
+                        <input type="date" id="endDate" class="form-control">
+                    </div>
+                    <button onclick="fetchPayslipHistory()" class="btn btn-primary">Filter</button>
+                </div>
+    
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Method</th>
+                                <th>Base Salary</th>
+                                <th>Bonus</th>
+                                <th>Total Earnings</th>
+                                <th>Tax</th>
+                                <th>Deductions</th>
+                                <th>Total Deductions</th>
+                                <th>Net Salary</th>
+                                <th>Amount Paid</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payslipHistoryBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="loading" class="loading">Loading...</div>
+    <div id="alert" class="alert"></div>
+
+    <script>
+        // Utility functions
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        // Update current time
+        function updateCurrentTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = 
+                now.toLocaleTimeString('en-US', { hour12: false });
+        }
+        setInterval(updateCurrentTime, 1000);
+        updateCurrentTime();
+
+        // Tab switching
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.nav-button').forEach(btn => 
+                    btn.classList.remove('active'));
+                button.classList.add('active');
+
+                document.querySelectorAll('.tab-content').forEach(tab => 
+                    tab.classList.remove('active'));
+                document.getElementById(button.dataset.tab).classList.add('active');
+
+                // Load data for the tab
+                switch(button.dataset.tab) {
+                    case 'profile':
+                        loadProfile();
+                        break;
+                    case 'leaves':
+                        loadLeaveRequests();
+                        break;
+                    case 'performance':
+                        loadPerformanceReviews();
+                        break;
+                    case 'attendance':
+                        loadAttendanceStatus();
+                        break;
+					case 'payslips':
+					
+					fetchPayslipData();
+					break;
+                }
+            });
+        });
+
+        // Attendance Management
+        async function loadAttendanceStatus() {
+            try {
+                showLoading();
+                const response = await fetch('/profile/profile/attendance/status');
+                if (!response.ok) throw new Error('Failed to load attendance status');
+                const data = await response.json();
+        
+                document.getElementById('timeIn').textContent = data.time_in || '--:--';
+                document.getElementById('timeOut').textContent = data.time_out || '--:--';
+                document.getElementById('workHours').textContent = 
+                    data.work_hours ? data.work_hours.toFixed(2) : '0.00';
+                document.getElementById('status').textContent = 
+                    data.checked_in ? 'Checked In' : 'Not Checked In';
+        
+                document.getElementById('checkinBtn').disabled = data.checked_in;
+                document.getElementById('checkoutBtn').disabled = !data.checked_in || data.checked_out;
+        
+                await loadAttendanceLogs(); // Load logs after setting current status
+            } catch (error) {
+                showAlert('Failed to load attendance status', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        document.getElementById('checkinBtn').addEventListener('click', async () => {
+            try {
+                showLoading();
+                const response = await fetch('/profile/profile/attendance/checkin', {
+                    method: 'POST'
+                });
+                if (!response.ok) throw new Error('Failed to check in');
+                const data = await response.json();
+                
+                showAlert('Successfully checked in', 'success');
+                loadAttendanceStatus();
+            } catch (error) {
+                showAlert(error.message, 'error'); // Display actual error message
+                console.error(error); 
+            } finally {
+                hideLoading();
+            }
+        });
+
+        document.getElementById('checkoutBtn').addEventListener('click', async () => {
+            try {
+                showLoading();
+                const response = await fetch('/profile/profile/attendance/checkout', {
+                    method: 'POST'
+                });
+                if (!response.ok) throw new Error('Failed to check out');
+                const data = await response.json();
+                
+                showAlert('Successfully checked out', 'success');
+                loadAttendanceStatus();
+            } catch (error) {
+                showAlert('Failed to check out', 'error');
+            } finally {
+                hideLoading();
+            }
+        });
+        async function loadAttendanceLogs() {
+            try {
+                showLoading();
+                const response = await fetch('/profile/profile/attendance/logs');
+                if (!response.ok) throw new Error('Failed to load attendance logs');
+                const logs = await response.json();
+        
+                const logTableBody = document.getElementById('attendanceLogTableBody');
+                logTableBody.innerHTML = logs.map(log => `
+                    <tr>
+                        <td>${log.date}</td>
+                        <td>${log.time_in}</td>
+                        <td>${log.time_out}</td>
+                        <td>${log.work_hours.toFixed(2)}</td>
+                        <td>${log.overtime_hours.toFixed(2)}</td>
+                        <td>${log.status}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error(error);
+                showAlert('Failed to load attendance logs', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Profile Management
+        async function loadProfile() {
+            try {
+                showLoading();
+                const response = await fetch('/profile/profile');
+                if (!response.ok) throw new Error('Failed to load profile');
+                const data = await response.json();
+                
+                const profileHTML = `
+                    <div class="profile-field">
+                        <label>Name</label>
+                        <div>${data.first_name} ${data.last_name}</div>
+                    </div>
+                    <div class="profile-field">
+                        <label>Employee ID</label>
+                        <div>${data.employee_id}</div>
+                    </div>
+                    <div class="profile-field">
+                        <label>Email</label>
+                        <div>${data.email}</div>
+                    </div>
+                    <div class="profile-field">
+                        <label>Phone</label>
+                        <div>${data.phone || 'N/A'}</div>
+                    </div>
+                    <div class="profile-field">
+                        <label>Department</label>
+                        <div>${data.department || 'N/A'}</div>
+                    </div>
+                    <div class="profile-field">
+                        <label>Role</label>
+                        <div>${data.role || 'N/A'}</div>
+                    </div>
+                `;
+                
+                document.getElementById('profileDetails').innerHTML = profileHTML;
+                
+                // Populate update form
+                document.getElementById('email').value = data.email || '';
+                document.getElementById('phone').value = data.phone || '';
+            } catch (error) {
+                showAlert('Failed to load profile data', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Update Profile
+        document.getElementById('updateProfileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                showLoading();
+                const response = await fetch('/profile/profile/update', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: document.getElementById('email').value,
+                        phone: document.getElementById('phone').value
+                    }),
+                });
+                
+                if (!response.ok) throw new Error('Failed to update profile');
+                
+                showAlert('Profile updated successfully', 'success');
+                loadProfile();
+            } catch (error) {
+                showAlert('Failed to update profile', 'error');
+            } finally {
+                hideLoading();
+            }
+        });
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showAlert(message, type = 'info') {
+            const alertElement = document.querySelector('#alert');
+            alertElement.textContent = message;
+            alertElement.className = `alert alert-${type}`;
+            alertElement.style.display = 'block';
+            setTimeout(() => {
+                alertElement.style.display = 'none';
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchLeaveTypes();
+            fetchLeaveRequests();
+        });
+        
+        // Utility functions
+        function showAlert(message, type = 'info') {
+            const alertElement = document.querySelector('#alert');
+            alertElement.textContent = message;
+            alertElement.className = `alert alert-${type}`;
+            alertElement.style.display = 'block';
+            setTimeout(() => {
+                alertElement.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Fetch and Display Leave Types and Balances
+        async function fetchLeaveTypes() {
+            try {
+                const response = await fetch('/profile/leaves/apply');
+                if (!response.ok) throw new Error('Failed to fetch leave types');
+        
+                const data = await response.json();
+        
+                // Populate Leave Balances Table
+                const balanceTableBody = document.querySelector('#leaveBalancesTableBody');
+                balanceTableBody.innerHTML = data.leave_types.map(type => `
+                    <tr>
+                        <td>${type.leave_type_name}</td>
+                        <td>${type.balance}</td>
+                    </tr>
+                `).join('');
+        
+                // Populate Leave Type Dropdown
+                const leaveTypeSelect = document.querySelector('#leaveType');
+                leaveTypeSelect.innerHTML = `
+                    <option value="">Select Leave Type</option>
+                    ${data.leave_types.map(type => `
+                        <option value="${type.leave_type_id}" data-balance="${type.balance}">
+                            ${type.leave_type_name}
+                        </option>
+                    `).join('')}
+                `;
+            } catch (error) {
+                showAlert('Error loading leave types: ' + error.message, 'error');
+            }
+        }
+        
+        // Set Calendar Limits Based on Selected Leave Type Balance
+        document.querySelector('#leaveType').addEventListener('change', (e) => {
+            const selectedOption = e.target.options[e.target.selectedIndex];
+            const balance = parseInt(selectedOption.getAttribute('data-balance'), 10);
+            const startDateInput = document.querySelector('#startDate');
+            const endDateInput = document.querySelector('#endDate');
+            const today = new Date();
+            const maxDate = new Date(today);
+        
+            if (balance > 0) {
+                // Enable the date fields if balance is greater than zero
+                startDateInput.removeAttribute('disabled');
+                endDateInput.removeAttribute('disabled');
+        
+                maxDate.setDate(today.getDate() + balance);
+                const formattedToday = today.toISOString().split("T")[0];
+                const formattedMaxDate = maxDate.toISOString().split("T")[0];
+        
+                startDateInput.setAttribute('min', formattedToday);
+                startDateInput.setAttribute('max', formattedMaxDate);
+                endDateInput.setAttribute('min', formattedToday);
+                endDateInput.setAttribute('max', formattedMaxDate);
+            } else {
+                // Disable the date fields if balance is zero
+                startDateInput.setAttribute('disabled', true);
+                endDateInput.setAttribute('disabled', true);
+            }
+        });
+        
+        // Fetch and Display Leave Requests with Approver
+        async function fetchLeaveRequests() {
+            try {
+                const response = await fetch('/profile/profile/leave-requests');
+                if (!response.ok) throw new Error('Failed to load leave requests');
+        
+                const requests = await response.json();
+        
+                const requestsTableBody = document.querySelector('#leaveRequestsTableBody');
+                requestsTableBody.innerHTML = requests.map(request => `
+                    <tr>
+                        <td>${request.leave_type || '-'}</td>
+                        <td>${request.balance || 'N/A'}</td>
+                        <td>${request.start_date}</td>
+                        <td>${request.end_date}</td>
+                        <td>${getStatusBadge(request.status)}</td>
+                        <td>${request.approver}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                showAlert('Error loading leave requests: ' + error.message, 'error');
+            }
+        }
+        
+        // Helper to Get Status Badge for Leave Requests
+        function getStatusBadge(status) {
+            const statusClasses = {
+                'pending': 'status-pending',
+                'approved': 'status-approved',
+                'rejected': 'status-rejected'
+            };
+            return `<span class="status-badge ${statusClasses[status.toLowerCase()] || 'status-pending'}">${status}</span>`;
+        }
+        
+        // Handle New Leave Request Submission
+        document.querySelector('#leaveRequestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+        
+            const leaveTypeId = document.querySelector('#leaveType').value;
+            const startDate = document.querySelector('#startDate').value;
+            const endDate = document.querySelector('#endDate').value;
+        
+            if (!leaveTypeId || !startDate || !endDate) {
+                showAlert('Please fill all required fields', 'error');
+                return;
+            }
+        
+            try {
+                const response = await fetch('/profile/leaves/apply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ leave_type_id: leaveTypeId, leave_start: startDate, leave_end: endDate })
+                });
+                const data = await response.json();
+        
+                if (!response.ok) throw new Error(data.error || 'Failed to submit leave request');
+        
+                showAlert('Leave request submitted successfully', 'success');
+                await Promise.all([fetchLeaveTypes(), fetchLeaveRequests()]);
+            } catch (error) {
+                showAlert(error.message, 'error');
+            }
+        });
+
+        // Performance Reviews
+        async function loadPerformanceReviews() {
+            try {
+                showLoading();
+                const response = await fetch('/profile/profile/performance-reviews');
+                if (!response.ok) throw new Error('Failed to load performance reviews');
+                const reviews = await response.json();
+                
+                const container = document.getElementById('reviewsContainer');
+                container.innerHTML = reviews.map(review => `
+                    <div class="review-card">
+                        <h3>Review Date: ${review.review_date}</h3>
+                        <p>Reviewer: ${review.reviewer}</p>
+                        <p>Score: ${review.review_score}</p>
+                        
+                        <div class="review-section">
+                            <h4>KPIs</h4>
+                            <ul>
+                                ${review.kpis.map(kpi => `
+                                    <li>${kpi.description} - Score: ${kpi.score}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div class="review-section">
+                            <h4>Goals</h4>
+                            <ul>
+                                ${review.goals.map(goal => `
+                                    <li>${goal.description} - Status: ${goal.status}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div class="review-section">
+                            <h4>Achievements</h4>
+                            <ul>
+                                ${review.achievements.map(achievement => `
+                                    <li>${achievement.description} (${achievement.date})</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                showAlert('Failed to load performance reviews', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+		// Initial load
+        loadAttendanceStatus();
+		
+        async function fetchPayslipData() {
+            try {
+                const response = await fetch('/profile/profile/payslip');
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                const payslipHTML = `
+                    <div class="employee-info">
+                        <p><strong>Employee ID:</strong> ${data.employee_details.employee_id}</p>
+                        <p><strong>Name:</strong> ${data.employee_details.name}</p>
+                        <p><strong>Department:</strong> ${data.employee_details.department || 'N/A'}</p>
+                        <p><strong>Role:</strong> ${data.employee_details.role || 'N/A'}</p>
+                    </div>
+                    
+                    <div class="payslip-details">
+                        <div class="payslip-section">
+                            <h3>Earnings</h3>
+                            <div class="amount-row">
+                                <span>Base Salary</span>
+                                <span>$${data.earnings.base_salary.toFixed(2)}</span>
+                            </div>
+                            <div class="amount-row">
+                                <span>Bonus</span>
+                                <span>$${data.earnings.bonus.toFixed(2)}</span>
+                            </div>
+                            <div class="amount-row total-row">
+                                <span>Total Earnings</span>
+                                <span>$${data.earnings.total_earnings.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="payslip-section">
+                            <h3>Deductions</h3>
+                            <div class="amount-row">
+                                <span>Tax</span>
+                                <span>$${data.deductions.tax.toFixed(2)}</span>
+                            </div>
+                            <div class="amount-row">
+                                <span>Other Deductions</span>
+                                <span>$${data.deductions.other_deductions.toFixed(2)}</span>
+                            </div>
+                            <div class="amount-row total-row">
+                                <span>Total Deductions</span>
+                                <span>$${data.deductions.total_deductions.toFixed(2)}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="payslip-section">
+                            <h3>Summary</h3>
+                            <div class="amount-row">
+                                <span>Gross Salary</span>
+                                <span>$${data.summary.gross_salary.toFixed(2)}</span>
+                            </div>
+                            <div class="amount-row">
+                                <span>Total Deductions</span>
+                                <span>$${data.summary.total_deductions.toFixed(2)}</span>
+                            </div>
+                            <div class="amount-row total-row">
+                                <span>Net Salary</span>
+                                <span>$${data.summary.net_salary.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="generated-date">
+                        Generated on: ${data.generated_date}
+                    </div>
+                `;
+                
+                document.getElementById('currentPayslip').innerHTML = payslipHTML;
+                
+            } catch (error) {
+                console.error('Error fetching payslip data:', error);
+                document.getElementById('currentPayslip').innerHTML = `
+                    <div class="alert alert-error">
+                        Error loading payslip data. Please try again later.
+                    </div>
+                `;
+            }
+        }
+        // Fetch payroll history data
+        async function fetchPayslipHistory() {
+            try {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                
+                // Build query parameters
+                const params = new URLSearchParams();
+                if (startDate) params.append('start_date', startDate);
+                if (endDate) params.append('end_date', endDate);
+                
+                const response = await fetch(`/profile/profile/payslip/history?${params.toString()}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                const tbody = document.getElementById('payslipHistoryBody');
+                tbody.innerHTML = '';
+                
+                data.forEach(payslip => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${payslip.payment_date}</td>
+                        <td><span class="status-badge status-${payslip.payment_status.toLowerCase()}">${payslip.payment_status}</span></td>
+                        <td>${payslip.payment_method}</td>
+                        <td>$${payslip.base_salary.toFixed(2)}</td>
+                        <td>$${payslip.bonus.toFixed(2)}</td>
+                        <td>$${payslip.total_earnings.toFixed(2)}</td>
+                        <td>$${payslip.tax.toFixed(2)}</td>
+                        <td>$${payslip.deductions.toFixed(2)}</td>
+                        <td>$${payslip.total_deductions.toFixed(2)}</td>
+                        <td>$${payslip.net_salary.toFixed(2)}</td>
+                        <td>$${payslip.amount_paid.toFixed(2)}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error fetching payslip history:', error);
+                document.getElementById('alert').innerHTML = `
+                    <div class="alert alert-error">
+                        Error loading payslip history. Please try again later.
+                    </div>
+                `;
+            }
+        }
+        
+        // Fetch payslip history when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial load if payslips tab is active
+            if (document.getElementById('payslips').classList.contains('active')) {
+                fetchPayslipHistory();
+            }
+            
+            // Load when switching to payslips tab
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    if (tab.getAttribute('data-tab') === 'payslips') {
+                        fetchPayslipHistory();
+                    }
+                });
+            });
+        });
+        
+        // Fetch payslip history when the page loads
+        document.addEventListener('DOMContentLoaded', fetchPayslipHistory);
+        function logout() {
+            fetch('/login/logout', {  
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Logout successful') {
+                    window.location.href = '/login';
+                } else {
+                    throw new Error('Logout failed');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Logout failed. Please try again.');
+            });
+        }
+    </script>
+</body>
+</html>

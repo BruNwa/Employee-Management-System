@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List of Payrolls</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #0f0f1d; /* Dark background to match the dashboard */
+    color: #ddd; /* Light text color for readability */
+    margin: 0;
+    padding: 0;
+}
+
+/* Header Styles */
+h1 {
+    text-align: center;
+    color: #e94560; /* Title color */
+    margin: 20px 0; /* Spacing around the header */
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse; /* Eliminate double borders */
+    margin-top: 20px; /* Space from the title */
+    background-color: #222831; /* Table background color */
+    color: #ccc; /* Table text color */
+}
+
+th {
+    background-color: #1a1a2e; /* Header background */
+    padding: 15px;
+    text-align: left;
+    font-size: 16px; /* Header font size */
+    color: #e94560; /* Header text color */
+    border-bottom: 2px solid #e94560; /* Bottom border */
+}
+
+td {
+    padding: 15px; /* Padding for table cells */
+    border-bottom: 1px solid #444; /* Row border */
+    text-align: left; /* Align text to the left */
+}
+
+/* Row Hover Effect */
+tr:hover {
+    background-color: #16213e; /* Background color on hover */
+}
+
+/* Footer Styles */
+footer {
+    text-align: center; /* Center footer text */
+    margin: 20px 0; /* Margin above and below */
+    color: #ccc; /* Footer text color */
+}
+</style>
+<body>
+    <h1>List of Payrolls</h1>
+    <table>
+        <tr>
+            <th>Payroll ID</th>
+            <th>Employee ID</th>
+            <th>Base Salary</th>
+            <th>Bonus</th>
+            <th>Tax</th>
+            <th>Deduction</th>
+        </tr>
+        {% for payroll in payrolls %}
+        <tr>
+            <td>{{ payroll.payroll_id }}</td>
+            <td>{{ payroll.employee_id }}</td>
+            <td>${{ payroll.base_salary | round(2) }}</td>
+            <td>${{ payroll.bonus | round(2) }}</td>
+            <td>${{ payroll.tax | round(2) }}</td>
+            <td>${{ payroll.deduction | round(2) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <footer>
+        © 2024 <strong>AWA</strong>. All Rights Reserved.
+    </footer>
+</body>
+</html>

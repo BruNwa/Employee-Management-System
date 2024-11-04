@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Include your styles here */
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fa fa-tachometer"></i>
+            <span>Admin Portal</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <a href="#" data-tab="manage-employee">
+                    <i class="fas fa-users"></i>
+                    Manage Employee
+                </a>
+                <ul class="submenu">
+                    <li>
+                        <a href="#" data-tab="creation">
+                            <i class="fas fa-plus"></i>
+                            Creation
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-tab="updating-viewing-deleting">
+                            <i class="fas fa-edit"></i>
+                            Update/View/Delete
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <!-- Other menu items -->
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div id="dynamic-content">
+            <!-- Dynamic content from creation.html will load here -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to load content from HTML files
+            function loadContent(tabId) {
+                let contentPath = '';
+                
+                if (tabId === 'creation') {
+                    contentPath = '/employee/new';
+                }
+                // Add other cases for different tabs if needed
+
+                if (contentPath) {
+                    fetch(contentPath)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Content not found');
+                            }
+                            return response.text();
+                        })
+                        .then(content => {
+                            document.getElementById('dynamic-content').innerHTML = content;
+                        })
+                        .catch(error => {
+                            console.error('Error loading content:', error);
+                            document.getElementById('dynamic-content').innerHTML = `
+                                <div class="card">
+                                    <div class="error-message">
+                                        <p>Error loading content. Please try again.</p>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                }
+            }
+
+            // Handle submenu clicks
+            const submenuItems = document.querySelectorAll('.submenu li a');
+            submenuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Remove active class from all submenu items
+                    submenuItems.forEach(i => i.classList.remove('active'));
+                    
+                    // Add active class to clicked submenu item
+                    this.classList.add('active');
+                    
+                    // Load the content based on the data-tab attribute
+                    loadContent(this.dataset.tab);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
