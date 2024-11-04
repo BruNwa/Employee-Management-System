@@ -4,7 +4,7 @@
 
 # Employee Management System 🏢
 
-A comprehensive employee management solution built with Python-Flask backend and HTML/CSS/JavaScript frontend, designed to streamline HR operations including employee data management, attendance tracking, performance monitoring, and payroll processing. This project was developed as part of the Mthree Software Development Program.
+A comprehensive employee management solution built with Python-Flask backend and HTML/CSS/JavaScript frontend, designed to streamline HR operations including employee data management, attendance tracking, performance monitoring, and payroll processing. This project was developed as part of the Mthree Site Reliability Program.
 
 ## 🌐 Demo
 Check out our live demo: [EMS Landing Page](https://employee-management-syst-55c8d.web.app/home)
