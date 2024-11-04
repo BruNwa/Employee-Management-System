@@ -49,6 +49,12 @@ Check out our live demo: [EMS Landing Page](https://employee-management-syst-55c
 - **Server**: Nginx
 - **UI Framework**: Modern responsive design
 
+##🎯 Application Architecture  
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2f186afd-e1a2-47e4-89db-b6e8e7c9a0ea" alt="Application Architecture" width="800"/>
+</p>
+
+
 ## 🛠 Infrastructure
 
 The application is containerized using Docker with three main services:
