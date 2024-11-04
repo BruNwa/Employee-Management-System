@@ -104,8 +104,8 @@ The system uses a relational database with the following core entities:
 
 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/employee-management-system.git
-cd employee-management-system
+git clone https://github.com/BruNwa/Employee-Management-System.git
+cd Employee-Management-System
 ```
 
 2. Start the application
